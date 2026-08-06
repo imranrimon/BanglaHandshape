@@ -26,7 +26,7 @@ _HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
-from bangla_handshape.class_alignment import discover_source, write_inventory
+from bangla_handshape.class_alignment import discover_source, write_inventory, SourceSpec
 from bangla_handshape.handshape_dataset import (
     HandshapeDataset, enumerate_source, split_user_disjoint, split_random,
     cap_per_class,
@@ -66,6 +66,22 @@ def _append_csv_row(csv_path, row):
         w.writerow(row)
 
 
+def _provided_test_dir(root):
+    """If `root` is a '.../train' folder with a sibling 'test'/'Test' folder,
+    return that sibling (the authors' held-out set); else None. Lets us prefer a
+    real held-out split over a leaky random split of an augmented train set
+    (e.g. BSLD_45, BDSL49, which ship their own test set)."""
+    norm = os.path.normpath(root)
+    if os.path.basename(norm).lower() != "train":
+        return None
+    parent = os.path.dirname(norm)
+    for name in ("test", "Test", "TEST"):
+        cand = os.path.join(parent, name)
+        if os.path.isdir(cand):
+            return cand
+    return None
+
+
 def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
     _init_seed(seed)
     base_exp = cfg.get("Experiment_name", "bhc_run")
@@ -93,8 +109,21 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
     train_pairs, val_pairs = [], []
     for spec in sources:
         items = enumerate_source(spec)
+        held_out = _provided_test_dir(spec.root)
         if (not force_random) and spec.name in ("bdsl47_digits", "bdsl47_letters"):
             tr, va, _te = split_user_disjoint(items, val_users, test_users)
+        elif held_out is not None:
+            # Author-provided held-out split: train on the whole train/ folder,
+            # evaluate on the sibling test/ folder. Avoids the augmentation /
+            # random-split leak on datasets that ship their own test set (BSLD_45,
+            # BDSL49). NOTE: still signer-dependent when the source has no user IDs.
+            tr = items
+            eval_spec = SourceSpec(name=spec.name, root=held_out,
+                                   num_classes=spec.num_classes,
+                                   class_to_idx=spec.class_to_idx)
+            va = enumerate_source(eval_spec)
+            print(f"[provided-test] {spec.name}: train={len(tr)} eval={len(va)} "
+                  f"(held-out {os.path.basename(held_out)})")
         else:
             tr, va, _te = split_random(items, seed=int(sp.get("seed", 0)),
                                        val_frac=float(sp.get("random_val_frac", 0.10)),

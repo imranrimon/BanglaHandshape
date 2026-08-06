@@ -6,7 +6,7 @@ Verifies on synthetic data:
   * `LoRALinear` forwards and trains its A/B matrices only
   * `apply_lora_to_linears` swaps the right submodules
   * `freeze_non_lora` leaves only A/B matrices (and the head if added) trainable
-  * `MultiHeadLoRADinov2` forward returns one (mask, logits) per source present in batch
+  * `MultiHeadLoRADinov2` forward returns one (source_idx, mask, logits) per source present in batch
 
 DINOv2 timm download is NOT required: we substitute a tiny stand-in nn.Module
 that has the same forward contract (returns (N, feat_dim) given (N, 3, H, W)).
@@ -169,7 +169,7 @@ def test_multihead_lora_dinov2_forward_routes_per_source():
     src = torch.tensor([0, 0, 1, 1, 2, 2])
     outputs = model(x, src)
     assert len(outputs) == 3   # all three sources represented
-    for src_i, (mask, logits) in enumerate(outputs):
+    for src_i, mask, logits in outputs:   # forward emits (source_idx, mask, logits)
         assert mask.sum().item() == 2
         assert logits.shape == (2, [3, 5, 4][src_i])
 
@@ -182,7 +182,7 @@ def test_train_utils_loss_and_topk_match_shapes():
     mask0 = torch.tensor([True, True, False])
     mask1 = torch.tensor([False, False, True])
     labels = torch.tensor([0, 2, 4])
-    outs = [(mask0, logits0), (mask1, logits1)]
+    outs = [(0, mask0, logits0), (1, mask1, logits1)]   # (source_idx, mask, logits)
     loss = multihead_loss(outs, labels)
     assert torch.isfinite(loss)
     loss.backward()

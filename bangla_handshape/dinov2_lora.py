@@ -97,7 +97,10 @@ def build_dinov2_lora(num_classes_per_source: List[int],
     """
     import timm
 
-    backbone = timm.create_model(timm_name, pretrained=pretrained, num_classes=0)
+    # dynamic_img_size=True lets ViTs — especially DINOv2, which is natively
+    # 518px — accept our 224px inputs by interpolating the positional embeddings.
+    backbone = timm.create_model(timm_name, pretrained=pretrained, num_classes=0,
+                                 dynamic_img_size=True)
     feat_dim = int(getattr(backbone, "num_features", 384))
 
     if full_finetune:

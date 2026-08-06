@@ -1,0 +1,39 @@
+Experiment_name: bhc_lora_smoke
+
+# 2-3 minute smoke version of path3_handshape_benchmark/configs/lora.yaml.
+# Restricts to two small sources, batch 4, 1 epoch — verifies the
+# multi-source dataset loader, LoRA wrap, multi-head forward, train+eval
+# loops, and CSV row writing. Use as a preflight before the full Path 3 sweep.
+
+sources:
+  bdsl_mnist:    data/BdSL-MNIST
+  bdsl47_digits: "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 4
+  lora_alpha: 8.0
+  lora_dropout: 0.0
+  lora_targets: [attn.qkv, attn.proj]      # narrower target set for smoke speed
+
+image_size: 224
+batch_size: 4
+num_workers: 0
+num_epoch: 1
+optimizer: AdamW
+base_lr: 0.0005
+weight_decay: 0.01
+warmup_epochs: 0
+grad_clip: 1.0
+save_interval: 1
+log_every: 5
+
+work_dir: ./work_dir/bhc_lora_smoke

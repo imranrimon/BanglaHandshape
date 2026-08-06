@@ -1,0 +1,28 @@
+name: bdsl_graph
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - pyg
+dependencies:
+  - python=3.8
+  - pytorch
+  - pytorch-cuda=11.8
+  - torchvision
+  - pyg
+  - pytorch-scatter
+  - scipy
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - seaborn
+  - pyyaml
+  - tqdm
+  - pytest
+  - wandb
+  - pip
+  - pip:
+    - timm
+    - einops
+    - mediapipe
+    - opencv-python

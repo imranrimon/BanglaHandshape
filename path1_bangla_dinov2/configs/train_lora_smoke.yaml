@@ -1,0 +1,38 @@
+Experiment_name: bdino_lora_smoke
+
+# 2-5 minute smoke version of train_lora.yaml.
+# Reuses the same config skeleton but trains for 1 epoch on two of the
+# smaller sources, confirming the entire path1 train pipeline runs end-to-end.
+
+sources:
+  bdsl_mnist:    data/BdSL-MNIST
+  bdsl47_digits: "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 4
+  lora_alpha: 8.0
+  lora_dropout: 0.0
+  lora_targets: [attn.qkv, attn.proj]
+
+image_size: 224
+batch_size: 4
+num_workers: 0
+num_epoch: 1
+optimizer: AdamW
+base_lr: 0.0005
+weight_decay: 0.01
+warmup_epochs: 0
+grad_clip: 1.0
+save_interval: 1
+log_every: 10
+
+work_dir: ./work_dir/bdino_lora_smoke

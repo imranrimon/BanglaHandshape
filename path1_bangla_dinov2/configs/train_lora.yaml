@@ -1,0 +1,42 @@
+Experiment_name: bdino_lora
+
+# Source roots (override individually if your disk layout differs).
+sources:
+  bdsl_mnist:          data/BdSL-MNIST
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+  bsld_45:             data/BSLD_45/Train
+  bdsl49_recognition:  data/bdsl49_extracted/Recognition_1/Recognition_1/train
+
+# Train / val split. For sources with `User XX` folders we use user-disjoint
+# splits (val_users + test_users); for sources without user metadata we fall
+# back to a deterministic random 80/10/10 with `seed`.
+split:
+  val_users: [4]      # User 04 held out
+  test_users: [5]     # User 05 held out
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+# DINOv2 + LoRA hyperparameters.
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m   # change to vit_base_* for more capacity
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj, mlp.fc1, mlp.fc2]
+
+# Training.
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 10
+optimizer: AdamW
+base_lr: 0.0005
+weight_decay: 0.01
+warmup_epochs: 1
+grad_clip: 1.0
+save_interval: 2
+
+work_dir: ./work_dir/bdino_lora

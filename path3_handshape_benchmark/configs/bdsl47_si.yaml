@@ -1,0 +1,33 @@
+# T3 (identity-shortcut gap) — BdSL47 ONLY, SIGNER-INDEPENDENT half.
+# User-disjoint: train = all users except {4,5}, val = user 4, test = user 5.
+# Run this AND bdsl47_sd.yaml with the same encoder; gap = SD - SI.
+# Strengthen with leave-one-user-out: rerun sweeping test_users over each user
+# id 1..10 (and a held-out val user), then report the gap's mean +/- std.
+Experiment_name: bhc_bdsl47_si
+
+sources:
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+
+split:
+  val_users: [4]
+  test_users: [5]
+  # force_random omitted -> BdSL47 uses its user-disjoint (SI) split.
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj, mlp.fc1, mlp.fc2]
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 5
+base_lr: 0.0005
+weight_decay: 0.01
+grad_clip: 1.0
+save_interval: 1
+work_dir: ./work_dir/bhc_bdsl47_si

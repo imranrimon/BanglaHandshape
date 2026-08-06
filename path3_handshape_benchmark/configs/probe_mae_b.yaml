@@ -1,0 +1,35 @@
+# A1 (paradigm) — MAE ViT-B/16 linear probe (a DIFFERENT self-supervised
+# paradigm than DINOv2: masked-autoencoding vs self-distillation). Compare with
+# DINOv2-B (SSL), SigLIP-B (VLM), ImageNet-B (supervised) at the same scale.
+Experiment_name: bhc_probe_mae_b
+
+sources:
+  bdsl_mnist:          data/BdSL-MNIST
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+  bsld_45:             data/BSLD_45/Train
+  bdsl49_recognition:  data/bdsl49_extracted/Recognition_1/Recognition_1/train
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+encoder:
+  # verify tag: python -c "import timm; print(timm.list_models('vit_base_patch16_224*mae*'))"
+  timm_name: vit_base_patch16_224.mae
+  pretrained: True
+  lora_rank: 0
+  lora_targets: []
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 5
+base_lr: 0.001
+weight_decay: 0.0001
+grad_clip: 1.0
+save_interval: 1
+work_dir: ./work_dir/bhc_probe_mae_b

@@ -1,0 +1,33 @@
+# Tier-1 baseline — ResNet-50 ImageNet-pretrained FINE-TUNE. This is the recipe
+# the published Bangla-handshape papers actually used (transfer-learned CNN);
+# re-running it under the SI protocol is what exposes the gap vs their SD numbers.
+Experiment_name: bhc_cnn_resnet50_imagenet
+
+sources:
+  bdsl_mnist:          data/BdSL-MNIST
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+  bsld_45:             data/BSLD_45/Train
+  bdsl49_recognition:  data/bdsl49_extracted/Recognition_1/Recognition_1/train
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+encoder:
+  arch: resnet50
+  pretrained: True        # ImageNet init, then fine-tune all layers
+  freeze_backbone: False
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 15
+base_lr: 0.0001           # small LR for fine-tuning pretrained conv weights
+weight_decay: 0.0001
+grad_clip: 1.0
+save_interval: 3
+work_dir: ./work_dir/bhc_cnn_resnet50_imagenet

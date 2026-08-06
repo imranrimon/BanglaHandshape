@@ -1,0 +1,38 @@
+Experiment_name: bhc_linear_probe
+
+# Identical source layout to Path 1's training config.
+sources:
+  bdsl_mnist:          data/BdSL-MNIST
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+  bsld_45:             data/BSLD_45/Train
+  bdsl49_recognition:  data/bdsl49_extracted/Recognition_1/Recognition_1/train
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+# Linear-probe = LoRA rank=0 (effectively no encoder updates) + per-source heads.
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 0          # disables LoRA; only heads train
+  lora_alpha: 0.0
+  lora_dropout: 0.0
+  lora_targets: []
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 5
+optimizer: AdamW
+base_lr: 0.001          # heads-only learning is robust to higher LR
+weight_decay: 0.0001
+warmup_epochs: 0
+grad_clip: 1.0
+save_interval: 1
+
+work_dir: ./work_dir/bhc_linear_probe

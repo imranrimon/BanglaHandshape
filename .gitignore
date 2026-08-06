@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+
+# Data + experiment outputs (never commit datasets or checkpoints)
+data/
+work_dir/
+results/
+results_final.csv
+*.pt
+*.pth
+*.pkl
+*.npy
+*.npz
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -136,15 +136,19 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
     ds_train = HandshapeDataset(train_pairs, transform=transform)
     ds_val = HandshapeDataset(val_pairs, transform=transform)
 
+    nw = int(cfg.get("num_workers", 0))
+    # persistent_workers keeps the worker pool alive across epochs (avoids the
+    # per-epoch respawn that aggravates Windows' shared-memory commitment limit).
+    extra = dict(persistent_workers=True, prefetch_factor=2) if nw > 0 else {}
     loader_train = DataLoader(
         ds_train, batch_size=int(cfg.get("batch_size", 64)),
-        shuffle=True, num_workers=int(cfg.get("num_workers", 0)),
-        drop_last=True, pin_memory=torch.cuda.is_available(),
+        shuffle=True, num_workers=nw,
+        drop_last=True, pin_memory=torch.cuda.is_available(), **extra,
     )
     loader_val = DataLoader(
         ds_val, batch_size=int(cfg.get("batch_size", 64)),
-        shuffle=False, num_workers=int(cfg.get("num_workers", 0)),
-        pin_memory=torch.cuda.is_available(),
+        shuffle=False, num_workers=nw,
+        pin_memory=torch.cuda.is_available(), **extra,
     )
 
     enc_cfg = cfg["encoder"]
@@ -180,7 +184,21 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
     )
     num_epoch = int(cfg.get("num_epoch", 5))
     best_per_source = {i: 0.0 for i in range(len(sources))}
-    for epoch in range(num_epoch):
+    # Resume from the last epoch checkpoint if this (experiment, seed) was
+    # interrupted, so a long run picks up instead of restarting at epoch 0.
+    resume_path = os.path.join(work_dir, f"resume_seed{seed}.pt")
+    start_epoch = 0
+    if os.path.exists(resume_path):
+        try:
+            ck = torch.load(resume_path, map_location=device)
+            model.load_state_dict(ck["model"])
+            optimizer.load_state_dict(ck["optimizer"])
+            start_epoch = int(ck["epoch"])
+            best_per_source = ck["best_per_source"]
+            print(f"[seed {seed}] resumed from epoch {start_epoch}/{num_epoch}")
+        except Exception as e:  # corrupt/incompatible checkpoint -> start fresh
+            print(f"[seed {seed}] resume failed ({e}); starting fresh")
+    for epoch in range(start_epoch, num_epoch):
         print(f"[seed {seed}] epoch {epoch+1}/{num_epoch}")
         train_one_epoch(model, loader_train, optimizer, device,
                         log_every=int(cfg.get("log_every", 50)),
@@ -190,6 +208,9 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
             name = ds_train.source_names()[src_i]
             print(f"  val {name}: Top-1 = {acc*100:.2f}%")
             best_per_source[src_i] = max(best_per_source[src_i], acc)
+        # Full-state resume checkpoint (overwritten each epoch).
+        torch.save({"model": model.state_dict(), "optimizer": optimizer.state_dict(),
+                    "epoch": epoch + 1, "best_per_source": best_per_source}, resume_path)
         if (epoch + 1) % int(cfg.get("save_interval", 1)) == 0 or epoch == num_epoch - 1:
             ckpt = os.path.join(work_dir, f"encoder_seed{seed}_epoch{epoch+1}.pt")
             torch.save(model.backbone.state_dict(), ckpt)

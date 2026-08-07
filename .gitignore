@@ -13,6 +13,7 @@ venv/
 data/
 work_dir/
 results/
+logs/
 results_final.csv
 *.pt
 *.pth

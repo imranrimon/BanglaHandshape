@@ -35,6 +35,8 @@ export CAMPAIGN_NW=8                    # data on scratch -> workers OK; set 0 i
 # reuse the login-node-warmed weight cache so tasks skip multi-GB HF/torch downloads
 export HF_HOME=/scratch/$USER/hf_cache
 export TORCH_HOME=/scratch/$USER/torch_cache
+export HF_HUB_OFFLINE=1                 # compute nodes have NO outbound HTTPS
+export TRANSFORMERS_OFFLINE=1           # -> use the warmed cache only, fail fast if missing
 
 # Index -> config. run_campaign.py runs each config for 3 seeds (skip-existing).
 CONFIGS=( \

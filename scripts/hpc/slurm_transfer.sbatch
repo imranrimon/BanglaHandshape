@@ -28,6 +28,8 @@ conda activate bdsl_graph
 export PYTHONIOENCODING=utf-8
 export HF_HOME=/scratch/$USER/hf_cache        # reuse the warmed weight cache
 export TORCH_HOME=/scratch/$USER/torch_cache
+export HF_HUB_OFFLINE=1                        # compute nodes have NO outbound HTTPS
+export TRANSFORMERS_OFFLINE=1
 
 python - <<'PYEOF'
 import sys

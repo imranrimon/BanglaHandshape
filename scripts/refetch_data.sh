@@ -4,20 +4,24 @@
 # paper (docs/SISTER_PAPER_DATA_REFETCH.md). Idempotent: each source is
 # skipped if its target folder already exists, so re-running only fills gaps.
 #
-# The three Mendeley sources require a click-through download (no stable
-# direct URL), so this script uses a STAGING model: you drop the downloaded
-# archives into $STAGE and the script extracts + normalises them (handles the
-# "Sign Alphabets"->"Sign Letters" rename and the BDSL49 double-nesting). The
-# Kaggle source (BSLD_45) is auto-downloaded if the `kaggle` CLI is configured.
+# All four sources use a STAGING model: you drop the downloaded archives into
+# $STAGE and the script extracts + normalises them (handles the "Sign Alphabets"
+# -> "Sign Letters" rename and the BDSL49 double-nesting). The three Mendeley
+# sources have no stable direct URL (click-through). BSLD_45 is NOT auto-pulled
+# either: its usual Kaggle slug (rayeed045/bangla-sign-language-dataset) is
+# actually BdSL47, not the 45-class set — set BSLD45_KAGGLE=<owner/slug> only if
+# you have verified a correct Kaggle source.
 #
 # Usage (from repo root, on a DollySods compute node or locally):
 #     bash scripts/refetch_data.sh              # extract from $STAGE + verify
 #     DATA_DIR=data STAGE=data/_downloads bash scripts/refetch_data.sh
 #
 # Env:
-#   DATA_DIR   where the code reads datasets from (default: ./data, the scratch symlink)
-#   STAGE      where you place the downloaded archives (default: $DATA_DIR/_downloads)
-#   PY         python with the bdsl_graph env (default: use `python` on PATH)
+#   DATA_DIR       where the code reads datasets from (default: ./data)
+#   STAGE          where you place the downloaded archives (default: $DATA_DIR/_downloads)
+#   PY             python with the bdsl_graph env (default: use `python` on PATH)
+#   BSLD45_KAGGLE  optional owner/slug for a VERIFIED 45-class BSLD_45 Kaggle source
+#                  (unset by default — the common rayeed045 slug is BdSL47, not this)
 # =====================================================================
 set -uo pipefail
 
@@ -101,31 +105,47 @@ fetch_bdsl47() {
 }
 
 # ---------------------------------------------------------------------
-# 4. BSLD_45  (Kaggle rayeed045/bangla-sign-language-dataset)
-#   -> data/BSLD_45/{Train,Val,Test}/<class>/*.jpg   (45 classes; ~94.5k augmented)
+# 4. BSLD_45  (45-class handshape set with author-provided Train/Val/Test)
+#   -> data/BSLD_45/{Train,Val,Test}/<class>/*.jpg
+#   The source is NOT the Kaggle set `rayeed045/bangla-sign-language-dataset`:
+#   verified 2026-08 that slug is actually BdSL47 (user-organized Sign Digits/
+#   Letters + per-sample MediaPipe CSVs), NOT the 45-class BSLD_45. So we do not
+#   auto-pull any default slug. Supply the correct archive by staging it in
+#   $STAGE, or set BSLD45_KAGGLE=<owner/slug> to a Kaggle source you've verified.
 # ---------------------------------------------------------------------
 fetch_bsld45() {
   local dest="$DATA_DIR/BSLD_45"
   [ -d "$dest/Train" ] && { say "BSLD_45 present, skip"; return; }
   local arc
-  if arc=$(find_archive 'bangla-sign-language-dataset*.zip' 'BSLD*.zip'); then
-    :
-  elif have kaggle; then
-    say "downloading BSLD_45 via kaggle CLI"
-    kaggle datasets download -d rayeed045/bangla-sign-language-dataset -p "$STAGE" || \
+  arc=$(find_archive 'BSLD*45*.zip' 'BSLD_45*.zip' 'bsld*45*.zip') || true
+  if [ -z "${arc:-}" ] && [ -n "${BSLD45_KAGGLE:-}" ] && have kaggle; then
+    say "downloading BSLD_45 via kaggle CLI ($BSLD45_KAGGLE)"
+    kaggle datasets download -d "$BSLD45_KAGGLE" -p "$STAGE" || \
       warn "kaggle download failed (check ~/.kaggle/kaggle.json credentials)"
-    arc=$(find_archive 'bangla-sign-language-dataset*.zip') || true
+    arc=$(find_archive "$(basename "$BSLD45_KAGGLE")*.zip") || true
   fi
   if [ -z "${arc:-}" ]; then
-    warn "BSLD_45 archive not found and kaggle CLI unavailable/failed."
-    warn "  Install: pip install kaggle ; put token at ~/.kaggle/kaggle.json (chmod 600)"
-    warn "  Or download https://www.kaggle.com/datasets/rayeed045/bangla-sign-language-dataset into $STAGE"
-    warn "  VERIFY it is the 45-class set with Train/Val/Test/ folders."; return
+    warn "BSLD_45 archive not found in $STAGE."
+    warn "  The 45-class set is NOT rayeed045/bangla-sign-language-dataset (that is BdSL47)."
+    warn "  Stage the correct 45-class archive (Train/Val/Test/<class>/*.jpg) in $STAGE,"
+    warn "  or set BSLD45_KAGGLE=<owner/slug> to a verified Kaggle source and re-run."; return
   fi
   say "extracting BSLD_45 from $(basename "$arc")"
   extract_into "$arc" "$dest.tmp"
+  # Guard: refuse a BdSL47-shaped archive (User*/ dirs or per-sample CSVs) — that
+  # is the exact mislabel above; populating data/BSLD_45 with it would corrupt the
+  # benchmark (wrong class space / wrong split).
+  if find "$dest.tmp" -maxdepth 4 -type d -iname 'User *' -print -quit | grep -q . \
+     || find "$dest.tmp" -name '*.csv' -print -quit | grep -q .; then
+    warn "staged archive looks like BdSL47 (User*/ folders or .csv files), NOT the"
+    warn "  45-class BSLD_45 — refusing to populate data/BSLD_45. Fix the source."
+    rm -rf "$dest.tmp"; return
+  fi
   local tr; tr=$(find "$dest.tmp" -maxdepth 3 -type d -name 'Train' | head -n1)
-  if [ -n "$tr" ]; then mkdir -p "$dest"; mv "$(dirname "$tr")"/* "$dest"/; else mv "$dest.tmp" "$dest"; fi
+  if [ -z "$tr" ]; then
+    warn "no Train/ folder inside the archive — not the expected BSLD_45 layout; leaving in $dest.tmp for inspection"; return
+  fi
+  mkdir -p "$dest"; mv "$(dirname "$tr")"/* "$dest"/
   rm -rf "$dest.tmp"
 }
 

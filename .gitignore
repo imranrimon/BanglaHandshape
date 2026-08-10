@@ -13,7 +13,12 @@ venv/
 # Downloadable model assets (re-fetched by preprocessing/extract_keypoints.py)
 .kp_models/
 
-# Data + experiment outputs (never commit datasets or checkpoints)
+# Data + experiment outputs (never commit datasets or checkpoints).
+# Anchored, slash-less forms so the HPC symlinks (data -> /scratch/.../data,
+# work_dir -> /scratch/.../work_dir) are ignored too — a trailing-slash pattern
+# only matches real directories, not symlinks.
+/data
+/work_dir
 data/
 work_dir/
 results/

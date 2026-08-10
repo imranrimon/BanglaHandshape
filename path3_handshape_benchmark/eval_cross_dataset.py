@@ -41,7 +41,7 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from bangla_handshape.class_alignment import discover_default
+from bangla_handshape.class_alignment import discover_default, SourceSpec
 from bangla_handshape.dinov2_lora import build_dinov2_lora
 from bangla_handshape.handshape_dataset import (
     HandshapeDataset,
@@ -49,6 +49,7 @@ from bangla_handshape.handshape_dataset import (
     split_user_disjoint,
     split_random,
 )
+from path3_handshape_benchmark.train_baseline import _provided_test_dir
 
 
 def _build_transforms(image_size=224):
@@ -72,8 +73,15 @@ def _per_source_splits(sources, val_users, test_users, seed):
     out = {}
     for spec in sources:
         items = enumerate_source(spec)
+        held = _provided_test_dir(spec.root)
         if spec.name in ("bdsl47_digits", "bdsl47_letters"):
             tr, va, _te = split_user_disjoint(items, val_users, test_users)
+        elif held is not None:
+            # Author-provided held-out test (BSLD_45, BDSL49) — same as
+            # train_baseline, so S1 and S2/T4 use identical eval sets.
+            tr = items
+            va = enumerate_source(SourceSpec(spec.name, held, spec.num_classes,
+                                             spec.class_to_idx))
         else:
             tr, va, _te = split_random(
                 items, seed=seed, val_frac=0.10, test_frac=0.10

@@ -39,17 +39,42 @@ cd BanglaHandshape
 
 ## 2. Data (git-ignored — must be placed under `data/`)
 
-Only the image sets are needed. Easiest: rsync the arranged local copy up:
+Only the image sets are needed: `BdSL-MNIST/`, `BdSL47/`, `BSLD_45/`,
+`bdsl49_extracted/` — **~5 GB across ~170k small files**.
+
+`rsync` is not on the Windows box, and `scp -r` is painfully slow for that many
+small files, so use a **tar-pipe over ssh** (one stream, no intermediate file).
+The ssh host alias `ds` (`ds.hpc.wvu.edu`) is already in `~/.ssh/config`.
+
+From the local box (git-bash), in `F:\BanglaHandshape`:
 
 ```bash
-# from the local Windows box (git-bash / WSL):
-rsync -avz F:/BanglaHandshape/data/BdSL-MNIST         <hpc>:~/BanglaHandshape/data/
-rsync -avz "F:/BanglaHandshape/data/BdSL47"           <hpc>:~/BanglaHandshape/data/
-rsync -avz F:/BanglaHandshape/data/BSLD_45            <hpc>:~/BanglaHandshape/data/
-rsync -avz F:/BanglaHandshape/data/bdsl49_extracted   <hpc>:~/BanglaHandshape/data/
+cd /f/BanglaHandshape
+# test on the smallest folder first (289 MB) to confirm auth/path:
+tar cf - data/BdSL-MNIST | ssh ds 'mkdir -p ~/BanglaHandshape && tar xf - -C ~/BanglaHandshape'
+# then the rest:
+for d in BdSL47 BSLD_45 bdsl49_extracted; do
+  echo "== uploading data/$d =="
+  tar cf - "data/$d" | ssh ds 'tar xf - -C ~/BanglaHandshape'
+done
 ```
 
-Or re-fetch on HPC per `docs/SISTER_PAPER_DATA_REFETCH.md`.
+- No `-z`: the images are already compressed, so gzip only burns CPU.
+- The remote path is single-quoted so `~` expands on **HPC**. If you cloned
+  elsewhere (e.g. `/scratch/$USER/BanglaHandshape`), replace `~/BanglaHandshape`
+  in the remote part accordingly.
+- Idempotent: if a folder drops mid-transfer, just re-run that one.
+
+Verify the counts match on both sides:
+
+```bash
+# local:
+find data/BdSL-MNIST data/BdSL47 data/BSLD_45 data/bdsl49_extracted -type f | wc -l
+# HPC:
+ssh ds 'cd ~/BanglaHandshape && find data/BdSL-MNIST data/BdSL47 data/BSLD_45 data/bdsl49_extracted -type f | wc -l'
+```
+
+Alternatively, re-fetch on HPC per `docs/SISTER_PAPER_DATA_REFETCH.md`.
 
 ## 3. Environment (once)
 

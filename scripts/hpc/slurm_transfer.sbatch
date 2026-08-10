@@ -15,17 +15,19 @@
 #SBATCH -c 8
 #SBATCH -n 1
 #SBATCH --gpus 1
-#SBATCH -p <PARTITION>              # <-- fill from `sinfo -s`
+#SBATCH -p gpu_7day                 # matches the array; 48h walltime fits
 #SBATCH -t 48:00:00
 #SBATCH -o slurm_logs/%x_%j.out
 #SBATCH -e slurm_logs/%x_%j.err
 
-set -euo pipefail
+set -eo pipefail    # NB: no -u — conda's MKL activate.d script uses unbound vars
 cd "$SLURM_SUBMIT_DIR"
 mkdir -p slurm_logs results
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate bdsl_graph
 export PYTHONIOENCODING=utf-8
+export HF_HOME=/scratch/$USER/hf_cache        # reuse the warmed weight cache
+export TORCH_HOME=/scratch/$USER/torch_cache
 
 python - <<'PYEOF'
 import sys

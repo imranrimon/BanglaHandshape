@@ -76,9 +76,14 @@ def external_train_running():
 
 
 def main(configs):
-    while external_train_running():
-        print("[wait] external train_baseline still running; sleep 60s", flush=True)
-        time.sleep(60)
+    # Under SLURM, each array task owns its own GPU, so the external-train
+    # contention wait (a Windows/interactive guard) is meaningless — and
+    # `pgrep -af train_baseline` false-matches unrelated command lines on shared
+    # nodes, deadlocking every task. Skip it when running as a batch job.
+    if not os.environ.get("SLURM_JOB_ID"):
+        while external_train_running():
+            print("[wait] external train_baseline still running; sleep 60s", flush=True)
+            time.sleep(60)
     for cfg in configs:
         with open(os.path.join(CONFIG_DIR, cfg + ".yaml")) as f:
             c = yaml.safe_load(f)

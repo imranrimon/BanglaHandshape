@@ -17,13 +17,13 @@
 #SBATCH -c 8
 #SBATCH -n 1
 #SBATCH --gpus 1
-#SBATCH -p <PARTITION>             # <-- fill from `sinfo -s`
+#SBATCH -p gpu_7day                # 7-day queue (array's 72h walltime > gpu_2day's 48h cap)
 ##SBATCH -a 0-18%10                # <-- alt: cap to 10 concurrent tasks if busy
 #SBATCH -t 72:00:00               # generous; full_ft x3 seeds is the long pole
 #SBATCH -o slurm_logs/%x_%A_%a.out
 #SBATCH -e slurm_logs/%x_%A_%a.err
 
-set -euo pipefail
+set -eo pipefail    # NB: no -u — conda's MKL activate.d script uses unbound vars
 cd "$SLURM_SUBMIT_DIR"
 mkdir -p slurm_logs results
 
@@ -32,6 +32,9 @@ source ~/miniconda3/etc/profile.d/conda.sh
 conda activate bdsl_graph
 export PYTHONIOENCODING=utf-8          # DollySods locale is often ASCII
 export CAMPAIGN_NW=8                    # data on scratch -> workers OK; set 0 if on NFS and it hangs
+# reuse the login-node-warmed weight cache so tasks skip multi-GB HF/torch downloads
+export HF_HOME=/scratch/$USER/hf_cache
+export TORCH_HOME=/scratch/$USER/torch_cache
 
 # Index -> config. run_campaign.py runs each config for 3 seeds (skip-existing).
 CONFIGS=( \

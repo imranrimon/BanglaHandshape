@@ -129,9 +129,15 @@ def _collect_ln_params(backbone):
     params = []
     for m in backbone.modules():
         if isinstance(m, nn.LayerNorm):
+            # build_dinov2_lora's freeze_non_lora() turned grad OFF for everything
+            # except the LoRA A/B matrices — including these LN affines. Tent must
+            # be able to update them, so re-enable grad here (else the optimizer
+            # step is a silent no-op and before == after exactly).
             if m.weight is not None:
+                m.weight.requires_grad_(True)
                 params.append(m.weight)
             if m.bias is not None:
+                m.bias.requires_grad_(True)
                 params.append(m.bias)
     return params
 
@@ -162,12 +168,15 @@ def _tent_adapt(model, head, loader, ln_params, steps, lr, device):
     only the LayerNorm affine params. Episodic — the caller snapshots/restores
     LN state around this so a re-run is clean.
 
-    Backbone goes to train() (so LayerNorm uses its trainable affine path); grads
-    are enabled ONLY for ln_params. The head is fixed.
+    LayerNorm has no batch-statistic behaviour, so eval() mode is correct here and
+    it disables the LoRA dropout noise; grads still flow to the (now-trainable) LN
+    affine params. The head is fixed. Prints the entropy trajectory so a no-op is
+    visible (entropy should DROP if adaptation is working).
     """
-    model.train()
+    model.eval()
     head.eval()
     opt = torch.optim.Adam(ln_params, lr=lr)
+    first, last = None, None
     for _step in range(steps):
         for x, _src, _y in loader:
             opt.zero_grad()
@@ -175,6 +184,11 @@ def _tent_adapt(model, head, loader, ln_params, steps, lr, device):
             loss = _entropy(head(feats))
             loss.backward()
             opt.step()
+            last = float(loss.detach())
+            if first is None:
+                first = last
+    print(f"    [tent] {len(ln_params)} LN affine params; mean entropy "
+          f"{first:.4f} -> {last:.4f} over {steps} steps")
 
 
 def _run_source(name, seed, epoch, ckpt, tta_steps, tta_lr, bs, nw,

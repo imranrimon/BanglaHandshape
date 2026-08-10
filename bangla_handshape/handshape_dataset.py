@@ -29,6 +29,30 @@ _USER_RE = re.compile(r"^User\s*(\d+)", re.I)
 _IMG_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}
 
 
+def _cache_key(path):
+    return os.path.normpath(os.path.abspath(path))
+
+
+def load_img_cache(cache_dir="work_dir/_img_cache"):
+    """Load the pre-resize cache index built by build_resized_cache.py.
+
+    Returns (index, cache_dir) where index maps abs-path -> (shard, row), or
+    (None, None) if no cache is present. A per-image cache MISS is always safe:
+    the Dataset falls back to decoding the original file, so a partial or absent
+    cache just means partial or no speedup, never wrong data."""
+    import glob as _glob
+    import json as _json
+    if not os.path.isdir(cache_dir):
+        return None, None
+    index = {}
+    for idxf in _glob.glob(os.path.join(cache_dir, "*.index.json")):
+        shard = os.path.basename(idxf)[: -len(".index.json")]
+        with open(idxf) as f:
+            for path, row in _json.load(f).items():
+                index[path] = (shard, int(row))
+    return (index, cache_dir) if index else (None, None)
+
+
 def _is_image(name):
     return os.path.splitext(name)[1].lower() in _IMG_EXTS
 
@@ -134,10 +158,21 @@ class HandshapeDataset(Dataset):
         sources_with_entries: List[Tuple[SourceSpec, List]],
         transform=None,
         image_size: int = 224,
+        img_cache_index=None,
+        img_cache_dir=None,
+        cached_transform=None,
     ):
         self.sources = [s for s, _e in sources_with_entries]
         self.image_size = image_size
         self.transform = transform
+        # Optional pre-resize cache (build_resized_cache.py): read a small cached
+        # 224x224 uint8 array + apply ToTensor/Normalize instead of decoding the
+        # full-res file. `cached_transform` must equal the tensor-only tail of
+        # `transform` (ToTensor+Normalize). Memmaps opened lazily per worker.
+        self.img_cache_index = img_cache_index
+        self.img_cache_dir = img_cache_dir
+        self.cached_transform = cached_transform
+        self._mmaps = {}
         # Flatten: (path, source_idx, label_within_source)
         self.items = []
         for src_idx, (_spec, entries) in enumerate(sources_with_entries):
@@ -147,8 +182,27 @@ class HandshapeDataset(Dataset):
     def __len__(self):
         return len(self.items)
 
+    def _cached(self, path):
+        """Return a transformed tensor from the pre-resize cache, or None on miss."""
+        if self.img_cache_index is None or self.cached_transform is None:
+            return None
+        hit = self.img_cache_index.get(_cache_key(path))
+        if hit is None:
+            return None
+        shard, row = hit
+        mm = self._mmaps.get(shard)
+        if mm is None:
+            mm = np.load(os.path.join(self.img_cache_dir, shard + ".npy"),
+                         mmap_mode="r")
+            self._mmaps[shard] = mm
+        arr = np.asarray(mm[row])  # contiguous (224,224,3) uint8
+        return self.cached_transform(arr)
+
     def __getitem__(self, idx):
         path, src_idx, label = self.items[idx]
+        cached = self._cached(path)
+        if cached is not None:
+            return cached, src_idx, label
         img = Image.open(path).convert("RGB")
         if self.transform is not None:
             img = self.transform(img)

@@ -64,7 +64,7 @@ def main(configs):
         # Parallel loading — nw=0 was ~6x slower (24 vs ~4 min/epoch). num_workers>0
         # can intermittently hit the Windows "shared file mapping ... 1455"
         # paging-commitment crash, so the per-seed loop below auto-retries.
-        c["num_workers"] = 4
+        c["num_workers"] = int(os.environ.get("CAMPAIGN_NW", "4"))
         # Full-budget: >=50 epochs for every config (Imran's directive). Harmless
         # with best-over-epochs selection — it just captures the true val peak.
         c["num_epoch"] = max(int(c.get("num_epoch", 5)), 50)

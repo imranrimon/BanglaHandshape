@@ -41,21 +41,33 @@ def multihead_topk(per_source_outputs, labels, k=1):
 
 
 def train_one_epoch(model, loader, optimizer, device, log_every=50,
-                    grad_clip: float = 1.0):
+                    grad_clip: float = 1.0, scaler=None):
     model.train()
+    use_amp = scaler is not None and device.type == "cuda"
     losses = []
     t0 = time.time()
     for step, (x, src_idx, labels) in enumerate(loader):
         x = x.to(device, non_blocking=True)
         src_idx = src_idx.to(device, non_blocking=True)
         labels = labels.to(device, non_blocking=True)
-        outputs = model(x, src_idx)
-        loss = multihead_loss(outputs, labels)
         optimizer.zero_grad(set_to_none=True)
-        loss.backward()
-        if grad_clip > 0:
-            torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
-        optimizer.step()
+        if use_amp:  # mixed precision — uses tensor cores, ~2-3x faster
+            with torch.cuda.amp.autocast():
+                outputs = model(x, src_idx)
+                loss = multihead_loss(outputs, labels)
+            scaler.scale(loss).backward()
+            if grad_clip > 0:
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            outputs = model(x, src_idx)
+            loss = multihead_loss(outputs, labels)
+            loss.backward()
+            if grad_clip > 0:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
+            optimizer.step()
         losses.append(float(loss.item()))
         if (step + 1) % log_every == 0:
             print(f"  step {step+1}/{len(loader)}  loss {sum(losses[-log_every:])/min(log_every, len(losses)):.4f}")

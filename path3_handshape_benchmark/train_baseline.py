@@ -29,7 +29,7 @@ if _HERE not in sys.path:
 from bangla_handshape.class_alignment import discover_source, write_inventory, SourceSpec
 from bangla_handshape.handshape_dataset import (
     HandshapeDataset, enumerate_source, split_user_disjoint, split_random,
-    cap_per_class,
+    cap_per_class, load_img_cache,
 )
 from bangla_handshape.dinov2_lora import build_dinov2_lora
 from bangla_handshape.train_utils import train_one_epoch, evaluate
@@ -51,6 +51,19 @@ def _build_transforms(image_size):
     return transforms.Compose([
         transforms.Resize(int(image_size * 1.15)),
         transforms.CenterCrop(image_size),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+
+
+def _build_cached_transforms():
+    """Tensor-only tail of _build_transforms, for the pre-resize cache (input is
+    an already Resize+CenterCrop'd 224x224 uint8 array). ToTensor on a uint8 HWC
+    ndarray yields the same CHW float[0,1] as on the equivalent PIL image, so the
+    result is bit-identical to the full transform."""
+    from torchvision import transforms
+    return transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406],
                              std=[0.229, 0.224, 0.225]),
@@ -133,8 +146,18 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
         val_pairs.append((spec, va))
 
     transform = _build_transforms(int(cfg.get("image_size", 224)))
-    ds_train = HandshapeDataset(train_pairs, transform=transform)
-    ds_val = HandshapeDataset(val_pairs, transform=transform)
+    cached_tf = _build_cached_transforms()
+    img_cache_index, img_cache_dir = load_img_cache()
+    if img_cache_index is not None:
+        hits = sum(1 for p, _s, _l in
+                   [(pp, 0, 0) for _spec, ents in train_pairs for pp, _l, _u in ents]
+                   if os.path.normpath(os.path.abspath(p)) in img_cache_index)
+        print(f"[img-cache] {len(img_cache_index)} cached entries; "
+              f"train hits {hits}/{sum(len(e) for _s, e in train_pairs)}")
+    _ck = dict(img_cache_index=img_cache_index, img_cache_dir=img_cache_dir,
+               cached_transform=cached_tf)
+    ds_train = HandshapeDataset(train_pairs, transform=transform, **_ck)
+    ds_val = HandshapeDataset(val_pairs, transform=transform, **_ck)
 
     nw = int(cfg.get("num_workers", 0))
     # persistent_workers keeps the worker pool alive across epochs (avoids the
@@ -183,6 +206,7 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
         weight_decay=float(cfg.get("weight_decay", 1e-2)),
     )
     num_epoch = int(cfg.get("num_epoch", 5))
+    scaler = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda"))
     best_per_source = {i: 0.0 for i in range(len(sources))}
     # Resume from the last epoch checkpoint if this (experiment, seed) was
     # interrupted, so a long run picks up instead of restarting at epoch 0.
@@ -202,7 +226,7 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
         print(f"[seed {seed}] epoch {epoch+1}/{num_epoch}")
         train_one_epoch(model, loader_train, optimizer, device,
                         log_every=int(cfg.get("log_every", 50)),
-                        grad_clip=float(cfg.get("grad_clip", 1.0)))
+                        grad_clip=float(cfg.get("grad_clip", 1.0)), scaler=scaler)
         accs = evaluate(model, loader_val, device)
         for src_i, acc in accs.items():
             name = ds_train.source_names()[src_i]

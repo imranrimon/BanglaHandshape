@@ -1,0 +1,35 @@
+# A4 (data efficiency) — 10-shot: cap the train set to 10 images/class.
+Experiment_name: bhc_kshot_k10
+
+sources:
+  bdsl_mnist:          data/BdSL-MNIST
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+  bsld_45:             data/BSLD_45/Train
+  bdsl49_recognition:  data/bdsl49_extracted/Recognition_1/Recognition_1/train
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+  max_train_per_class: 10
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj, mlp.fc1, mlp.fc2]
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 50
+base_lr: 0.0005
+weight_decay: 0.01
+grad_clip: 1.0
+save_interval: 5
+work_dir: ./work_dir/bhc_kshot_k10

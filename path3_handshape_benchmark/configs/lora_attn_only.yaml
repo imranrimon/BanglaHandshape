@@ -1,0 +1,35 @@
+# A5 (LoRA placement) — attention-only LoRA (no MLP adapters). Compare against
+# lora.yaml (attn + mlp) to show what the MLP adapters contribute.
+Experiment_name: bhc_lora_attn_only
+
+sources:
+  bdsl_mnist:          data/BdSL-MNIST
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+  bsld_45:             data/BSLD_45/Train
+  bdsl49_recognition:  data/bdsl49_extracted/Recognition_1/Recognition_1/train
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj]
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 50
+base_lr: 0.0005
+weight_decay: 0.01
+grad_clip: 1.0
+save_interval: 5
+work_dir: ./work_dir/bhc_lora_attn_only

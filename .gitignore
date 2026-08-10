@@ -8,6 +8,10 @@ __pycache__/
 # Environments
 .venv/
 venv/
+.kpenv/
+
+# Downloadable model assets (re-fetched by preprocessing/extract_keypoints.py)
+.kp_models/
 
 # Data + experiment outputs (never commit datasets or checkpoints)
 data/

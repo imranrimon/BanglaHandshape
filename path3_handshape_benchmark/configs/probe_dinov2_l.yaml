@@ -1,0 +1,33 @@
+# A3 (scale) — DINOv2 ViT-L/14 linear probe. Completes the S -> B -> L scale
+# sweep for the frozen-feature quality curve. Uses the cached-feature probe path.
+Experiment_name: bhc_probe_dinov2_l
+
+sources:
+  bdsl_mnist:          data/BdSL-MNIST
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+  bsld_45:             data/BSLD_45/Train
+  bdsl49_recognition:  data/bdsl49_extracted/Recognition_1/Recognition_1/train
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+encoder:
+  timm_name: vit_large_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 0
+  lora_targets: []
+
+image_size: 224
+batch_size: 32          # ViT-L: smaller batch for the one-pass feature extraction
+num_workers: 4
+num_epoch: 50
+base_lr: 0.001
+weight_decay: 0.0001
+grad_clip: 1.0
+save_interval: 1
+work_dir: ./work_dir/bhc_probe_dinov2_l

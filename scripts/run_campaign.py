@@ -45,7 +45,25 @@ def seed_done(base, seed):
 def external_train_running():
     """True if a separate `-m ...train_baseline` python process is running.
     (This driver imports the function, so its own cmdline does NOT contain
-    'train_baseline'.)"""
+    'train_baseline'.)
+
+    Cross-platform: `pgrep` on Linux/HPC (DollySods), PowerShell/Win32 on
+    Windows. Either failure path returns False, so at worst the driver skips the
+    GPU-contention wait and starts immediately — never a hang."""
+    my_pid = str(os.getpid())
+    if os.name != "nt":
+        # -f matches the full command line; exclude our own pid so importing
+        # the module here doesn't count as an external run.
+        try:
+            out = subprocess.run(["pgrep", "-af", "train_baseline"],
+                                 capture_output=True, text=True, timeout=30).stdout
+            for line in out.splitlines():
+                pid = line.split(None, 1)[0]
+                if pid and pid != my_pid:
+                    return True
+            return False
+        except Exception:
+            return False
     ps = ("(Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | "
           "Where-Object { $_.CommandLine -match 'train_baseline' } | "
           "Measure-Object).Count")

@@ -19,7 +19,7 @@ gone. This file is the recipe to get them back.
 | **BdSL-MNIST** (`bdsl_mnist`) | 37 | [Mendeley `6f2wm5p3vf/1`](https://data.mendeley.com/datasets/6f2wm5p3vf/1) | `data/BdSL-MNIST/<class>/*.png` |
 | **BdSL47 Sign Digits** (`bdsl47_digits`) | 10 | [Mendeley `pbb3w3f92y/3`](https://data.mendeley.com/datasets/pbb3w3f92y/3) · mirror [Dryad](https://doi.org/10.5061/dryad.1vhhmgqwk) | `data/BdSL47/Bangla Sign Language Dataset - Sign Digits/<User>/<Sign>/…` |
 | **BdSL47 Sign Letters** (`bdsl47_letters`) | 37 | same download as Digits | `data/BdSL47/Bangla Sign Language Dataset - Sign Letters/<User>/<Sign>/…` |
-| **BSLD_45** (`bsld_45`) | 45 | [Kaggle `rayeed045/bangla-sign-language-dataset`](https://www.kaggle.com/datasets/rayeed045/bangla-sign-language-dataset) *(verify — see note)* | `data/BSLD_45/Train/<class>/*.jpg` (+ `Val/`, `Test/`) |
+| **BSLD_45** (`bsld_45`) | 45 | **source TBD — see note 3** (NOT the `rayeed045` Kaggle slug, which is BdSL47) | `data/BSLD_45/Train/<class>/*.jpg` (+ `Val/`, `Test/`) |
 | **BDSL 49 Recognition** (`bdsl49_recognition`) | 49 | [Mendeley `k5yk4j8z8s/6`](https://data.mendeley.com/datasets/k5yk4j8z8s/6) · [arXiv 2208.06827](https://arxiv.org/abs/2208.06827) | `data/bdsl49_extracted/Recognition_1/Recognition_1/train/<class>/…` (+ `test/`) |
 
 Total ≈ 195 k images across the four. Compute for the whole paper is ~1–2 GPU-days.
@@ -37,11 +37,17 @@ Total ≈ 195 k images across the four. Compute for the whole paper is ~1–2 GP
    the sister paper uses only the **Recognition** task. Extracting it yields the
    doubled `Recognition_1/Recognition_1/{train,test}` path — that exact nesting is
    what the code reads, so don't flatten it.
-3. **BSLD_45 — verify identity.** The Kaggle link above (by `rayeed045`, the
-   BdSL47 author) is the most likely source, but confirm on download that it is
-   the **45-class** set with author-provided `Train/Val/Test/` folders and ~94.5 k
-   augmented jpg. If it differs, search Kaggle for the 45-class Bangla handshape
-   set and adjust `DEFAULT_SOURCES` if the folder name changes.
+3. **BSLD_45 — source is NOT `rayeed045/bangla-sign-language-dataset`.**
+   Verified 2026-08: that Kaggle slug is actually **BdSL47** (user-organized
+   `User <name>/…` Sign Digits/Letters + per-sample MediaPipe `.csv` files), not
+   the 45-class BSLD_45 with `Train/Val/Test/`. The correct 45-class source is
+   TBD — get it from the original BSLD_45 paper/authors, confirm it has
+   `Train/Val/Test/<class>/*.jpg`, then either stage its archive for
+   `scripts/refetch_data.sh` or set `BSLD45_KAGGLE=<owner/slug>`. The refetch
+   script refuses to populate `data/BSLD_45` from a BdSL47-shaped archive
+   (`User*/` dirs or `.csv`), so a wrong source fails loudly instead of silently
+   corrupting the benchmark. Until resolved, `discover_default` simply omits
+   `bsld_45` (the other four sources run fine).
 
 ## Where to put it
 

@@ -1,0 +1,16 @@
+{
+  "version": "0.1",
+  "verified": false,
+  "_comment": "ILLUSTRATIVE SKELETON ONLY — not a verified mapping. Shows the schema: canonical ids 0..K-1 with names, and each source's class-folder -> canonical id. Real ids/names come from propose_alignment.py + human (signer/linguist) verification. Folder names must match the on-disk class folders (SourceSpec.class_to_idx keys); for BdSL47 those are 'Sign N', for flat sources they are the integer folder names.",
+  "canonical": {
+    "0": {"name": "handshape_0", "hamnosys": "", "notes": "e.g. flat-B"},
+    "1": {"name": "handshape_1", "hamnosys": "", "notes": "e.g. fist-A"},
+    "2": {"name": "handshape_2", "hamnosys": "", "notes": ""}
+  },
+  "map": {
+    "bdsl47_digits": {"Sign 0": 0, "Sign 1": 1},
+    "bdsl_mnist": {"0": 0, "1": 2},
+    "bsld_45": {"0": 1},
+    "bdsl49_recognition": {"0": 2}
+  }
+}

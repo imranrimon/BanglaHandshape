@@ -178,3 +178,46 @@ python tools/summarize_seeds.py --csv results_final.csv --markdown > results/sis
 Week 1: T1 (foundation rows) + Tier-1 CNNs → §5.2. Week 2: T3 + LOUO → §5.5.
 Week 3: T4 + A1/A2/A4 ablations. Week 4: A6 keypoint control + reviewer-defense
 appendix. Sister paper stays ~1 GPU-week vs the main paper's GPU-month.
+
+
+## 9. Future work — Tier-3: unified handshape taxonomy & LODO
+
+**Decision: deferred to future work.** The unified cross-corpus protocol (unified
+label space + leave-one-dataset-out, LODO) is the one contribution that needs a
+human in the loop — a native-signer / sign-linguist to verify the canonical
+handshape mapping — so it is a deliberate future-work boundary, not a compute
+blocker. Cross-corpus generalization is still reported in the present work via the
+pairwise transfer matrix (T4, label-agnostic); LODO is its deeper, single-label-space
+successor.
+
+**Paper Future-Work paragraph (draft):**
+
+> A natural extension of this benchmark is a *unified* cross-corpus protocol. The
+> sources annotate overlapping hand *handshapes* under disjoint, dataset-specific
+> label indices; mapping them into a single canonical handshape vocabulary — e.g.
+> HamNoSys handshape symbols or the phonological handshape inventory of Bangla Sign
+> Language — would enable (i) a single-label-space classifier trained across corpora
+> and (ii) a *leave-one-dataset-out* (LODO) evaluation, in which a model trained on
+> the other corpora is tested on a fully held-out corpus in the same label space —
+> the strongest test of generalization to an unseen recording environment and signer
+> population. We provide the complete infrastructure for this: a canonical-alignment
+> schema, a DINOv2-prototype cross-source clustering tool that drafts a candidate
+> mapping with per-class similarity evidence, and a LODO training/evaluation runner
+> gated on a verified alignment. We release a compute-proposed draft alignment
+> (55 candidate handshape groups over 178 source classes) as a bootstrap. The
+> remaining step — expert verification of the canonical mapping — is left to future
+> work, as a credible unified benchmark requires linguistic ground truth rather than
+> an automatically-clustered proxy.
+
+**How to resume (repo state, all committed):**
+- Tooling: `bangla_handshape/handshape_taxonomy.py` (schema + coverage API),
+  `path3_handshape_benchmark/propose_alignment.py` (draft), `run_lodo.py` (LODO),
+  `scripts/hpc/slurm_{propose,lodo}.sbatch`, `alignment/README.md`.
+- Bootstrap artifacts: `alignment/handshape_alignment.proposed.json`,
+  `alignment/handshape_alignment_review.csv`.
+- Steps: (1) re-run the proposer sweeping `--sim-threshold` up to 0.90–0.95 — the
+  DINOv2 hand-crop prototypes are high-cosine, so the 0.92 draft under-merges across
+  sources (only 1 group shared by ≥2 sources ⇒ near-zero LODO coverage today);
+  (2) a signer/linguist edits the review CSV (confirm/split/merge, fill handshape
+  names); (3) save as `alignment/handshape_alignment.json` with `"verified": true`;
+  (4) `sbatch scripts/hpc/slurm_lodo.sbatch`.

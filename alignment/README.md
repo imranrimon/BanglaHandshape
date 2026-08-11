@@ -1,5 +1,14 @@
 # Tier-3 — Unified handshape taxonomy & LODO
 
+> **STATUS: FUTURE WORK (deferred).** The tooling and a compute-proposed draft
+> alignment are complete and committed, but LODO is *not run* in the paper — it is
+> gated on expert (native-signer / sign-linguist) verification of the canonical
+> mapping. See `docs/SISTER_PAPER_EXPERIMENTAL_DESIGN.md` §9 for the rationale and
+> the paper Future-Work paragraph. Cross-corpus generalization is reported in the
+> paper via the pairwise transfer matrix (T4); LODO is its deeper successor. Do NOT
+> report LODO numbers off an unverified alignment. Current draft (sim-threshold 0.92)
+> under-merges across sources, so re-run the proposer at 0.90–0.95 before verifying.
+
 This directory holds the **cross-corpus handshape alignment** that unifies the
 five sources' disjoint local label spaces into ONE canonical handshape
 vocabulary. It is the opt-in unification the benchmark anticipates

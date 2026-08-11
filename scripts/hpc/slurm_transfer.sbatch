@@ -16,6 +16,7 @@
 #SBATCH -n 1
 #SBATCH --gpus 1
 #SBATCH -p gpu_7day                 # matches the array; 48h walltime fits
+#SBATCH --exclude=dscog035,dscog036   # dscog035 idle-but-fails; dscog036 down
 #SBATCH -t 48:00:00
 #SBATCH -o slurm_logs/%x_%j.out
 #SBATCH -e slurm_logs/%x_%j.err

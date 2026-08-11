@@ -14,6 +14,7 @@
 #SBATCH -n 1
 #SBATCH --gpus 1
 #SBATCH -p gpu_2day,gpu_7day
+#SBATCH --exclude=dscog035,dscog036   # dscog035 idle-but-fails; dscog036 down
 #SBATCH -t 03:00:00
 #SBATCH -o slurm_logs/%x_%j.out
 #SBATCH -e slurm_logs/%x_%j.err

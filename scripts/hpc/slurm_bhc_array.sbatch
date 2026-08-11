@@ -18,6 +18,7 @@
 #SBATCH -n 1
 #SBATCH --gpus 1
 #SBATCH -p gpu_7day                # 7-day queue (array's 72h walltime > gpu_2day's 48h cap)
+#SBATCH --exclude=dscog035,dscog036   # dscog035 idle-but-fails; dscog036 down
 ##SBATCH -a 0-18%10                # <-- alt: cap to 10 concurrent tasks if busy
 #SBATCH -t 72:00:00               # generous; full_ft x3 seeds is the long pole
 #SBATCH -o slurm_logs/%x_%A_%a.out

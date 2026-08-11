@@ -1,0 +1,46 @@
+# PHASE-2 METHOD (paper's core contribution) — distill the signer-agnostic pose
+# (MediaPipe keypoint) stream into the DINOv2-S+LoRA APPEARANCE student, so the
+# student is signer-invariant BUT uses IMAGES ONLY at test time.
+#
+# Same encoder + same user-disjoint SI split as bdsl47_si.yaml (val=user 4,
+# test=user 5), so the distilled SI Top-1 is a CLEAN comparison against the plain
+# LoRA baseline (digits 94.4 / letters 86.7). Headline: distilled SI > plain SI.
+#
+# Loss = CE(student, label) + kd.lambda * KL(softmax(student/T) || softmax(teacher/T)) * T^2
+# (KD term applied to detected-hand samples only). Teacher = keypoint-MLP trained
+# on the SAME SI TRAIN split, frozen. Run with train_distill.py.
+Experiment_name: bhc_bdsl47_si_distill
+
+sources:
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+
+split:
+  val_users: [4]
+  test_users: [5]
+  # force_random omitted -> BdSL47 uses its user-disjoint (SI) split.
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj, mlp.fc1, mlp.fc2]
+
+# Distillation knobs (Phase-2 method).
+kd:
+  lambda: 1.0          # weight on the KD term
+  temperature: 2.0     # Ts — softens both student and teacher distributions
+  teacher_epochs: 50   # keypoint-MLP teacher training length (fast, on cached vectors)
+  teacher_hidden: 256  # keypoint-MLP trunk width
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 50
+base_lr: 0.0005
+weight_decay: 0.01
+grad_clip: 1.0
+save_interval: 1
+work_dir: ./work_dir/bhc_bdsl47_si_distill

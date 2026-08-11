@@ -35,3 +35,12 @@ results_final.csv
 Thumbs.db
 .vscode/
 .idea/
+
+# paper build artifacts
+BanglaHandshape_paper_overleaf.zip
+paper/*.aux
+paper/*.log
+paper/*.pdf
+paper/*.bbl
+paper/*.blg
+paper/*.out

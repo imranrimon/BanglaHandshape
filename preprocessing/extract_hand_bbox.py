@@ -116,7 +116,9 @@ def extract_source(name, root, landmarker, margin, log_every=2000):
     rate = 100.0 * detected.sum() / max(1, n)
     print(f"[{name}] DONE n={n} detected={int(detected.sum())} ({rate:.1f}%) "
           f"in {time.time()-t0:.0f}s", flush=True)
-    return np.array(imgs, dtype=object), bbox, detected
+    # Unicode (not object) dtype so the .npz is pickle-free and loads in the
+    # numpy-1.x training env (an object array pickles numpy 2.x's numpy._core).
+    return np.asarray(imgs, dtype="U"), bbox, detected
 
 
 def main():

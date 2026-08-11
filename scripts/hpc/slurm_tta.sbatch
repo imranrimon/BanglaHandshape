@@ -38,6 +38,7 @@ for seed in 0 1 2; do
   python -u -m path3_handshape_benchmark.eval_tta \
     --si-dir work_dir/bhc_bdsl47_si --seed $seed --epoch 0 \
     --sources bdsl47_digits bdsl47_letters \
-    --tta-steps 20 --tta-lr 2.5e-3 --results-csv results/bhc_tta.csv
+    --tta-method im --div-weight 1.0 --tta-steps 3 --tta-lr 1e-3 \
+    --results-csv results/bhc_tta.csv
 done
 echo "=== TTA DONE -> results/bhc_tta.csv ==="

@@ -156,43 +156,55 @@ def _eval_head(model, head, loader, device):
     return (correct / total) if total else 0.0
 
 
-def _entropy(logits):
-    """Mean Shannon entropy H(softmax(logits)) = -sum p log p over the batch."""
+def _adapt_loss(logits, method, div_weight):
+    """Return (loss, mean_entropy, batch_diversity).
+
+    'tent' minimizes per-sample entropy only. 'im' (Information Maximization,
+    SHOT-style) also MAXIMIZES the batch-marginal entropy (diversity), which is
+    the collapse guard: plain Tent on an already-overconfident model drives every
+    prediction onto one confident class (entropy -> 0 but accuracy drops); the
+    diversity term penalizes that degenerate all-same-class solution.
+    """
     logp = torch.log_softmax(logits, dim=1)
     p = logp.exp()
-    return -(p * logp).sum(dim=1).mean()
+    ent = -(p * logp).sum(dim=1).mean()            # per-sample confidence (minimize)
+    p_bar = p.mean(dim=0)
+    div = -(p_bar * torch.log(p_bar + 1e-8)).sum()  # batch-marginal diversity (maximize)
+    if method == "tent":
+        return ent, float(ent), float(div)
+    return ent - div_weight * div, float(ent), float(div)
 
 
-def _tent_adapt(model, head, loader, ln_params, steps, lr, device):
-    """Tent: minimize prediction entropy over the UNLABELED loader by updating
-    only the LayerNorm affine params. Episodic — the caller snapshots/restores
-    LN state around this so a re-run is clean.
+def _tent_adapt(model, head, loader, ln_params, steps, lr, device,
+                method="im", div_weight=1.0):
+    """Adapt only the LayerNorm affine params on the UNLABELED loader. Episodic —
+    the caller snapshots/restores LN state around this so a re-run is clean.
 
     LayerNorm has no batch-statistic behaviour, so eval() mode is correct here and
     it disables the LoRA dropout noise; grads still flow to the (now-trainable) LN
-    affine params. The head is fixed. Prints the entropy trajectory so a no-op is
-    visible (entropy should DROP if adaptation is working).
+    affine params. The head is fixed. Prints the entropy AND diversity trajectory
+    so a no-op (entropy flat) or a collapse (diversity crashing) is visible.
     """
     model.eval()
     head.eval()
     opt = torch.optim.Adam(ln_params, lr=lr)
-    first, last = None, None
+    e0 = d0 = e1 = d1 = None
     for _step in range(steps):
         for x, _src, _y in loader:
             opt.zero_grad()
-            feats = model.features(x.to(device, non_blocking=True))
-            loss = _entropy(head(feats))
+            loss, e, d = _adapt_loss(head(model.features(x.to(device, non_blocking=True))),
+                                     method, div_weight)
             loss.backward()
             opt.step()
-            last = float(loss.detach())
-            if first is None:
-                first = last
-    print(f"    [tent] {len(ln_params)} LN affine params; mean entropy "
-          f"{first:.4f} -> {last:.4f} over {steps} steps")
+            e1, d1 = e, d
+            if e0 is None:
+                e0, d0 = e, d
+    print(f"    [{method}] {len(ln_params)} LN params; entropy {e0:.4f}->{e1:.4f} "
+          f"diversity {d0:.4f}->{d1:.4f} ({steps} steps, lr={lr}, div_w={div_weight})")
 
 
 def _run_source(name, seed, epoch, ckpt, tta_steps, tta_lr, bs, nw,
-                image_size, results_csv, work_dir):
+                image_size, results_csv, work_dir, method="im", div_weight=1.0):
     root = SOURCE_ROOTS[name]
     if not os.path.isdir(root):
         print(f"[skip] {name}: source root not found: {root!r}")
@@ -247,7 +259,8 @@ def _run_source(name, seed, epoch, ckpt, tta_steps, tta_lr, bs, nw,
     ln_snapshot = [p.detach().clone() for p in ln_params]
 
     # Tent: adapt LN affine on the UNLABELED test-user images.
-    _tent_adapt(model, head, te_loader_adapt, ln_params, tta_steps, tta_lr, device)
+    _tent_adapt(model, head, te_loader_adapt, ln_params, tta_steps, tta_lr, device,
+                method=method, div_weight=div_weight)
 
     # AFTER adaptation (report on the SAME test-user set — transductive TTA).
     after_test = _eval_head(model, head, te_loader_eval, device)
@@ -289,10 +302,16 @@ def main():
     ap.add_argument("--sources", nargs="+",
                     default=["bdsl47_digits", "bdsl47_letters"],
                     choices=list(SOURCE_ROOTS.keys()))
-    ap.add_argument("--tta-steps", type=int, default=10,
-                    help="number of entropy-minimization passes over the test images")
+    ap.add_argument("--tta-steps", type=int, default=3,
+                    help="number of adaptation passes over the test images")
     ap.add_argument("--tta-lr", type=float, default=1e-3,
                     help="Adam LR for the LayerNorm affine params")
+    ap.add_argument("--tta-method", choices=["im", "tent"], default="im",
+                    help="im = entropy-min + diversity (collapse-guarded, default); "
+                         "tent = entropy-min only")
+    ap.add_argument("--div-weight", type=float, default=1.0,
+                    help="weight on the batch-diversity term (im only); higher = "
+                         "stronger anti-collapse")
     ap.add_argument("--batch-size", type=int, default=64)
     ap.add_argument("--num-workers", type=int, default=4)
     ap.add_argument("--image-size", type=int, default=224)
@@ -321,14 +340,16 @@ def main():
         print(f"[auto] latest checkpoint: {os.path.basename(ckpt)} (epoch {epoch})")
 
     work_dir = os.path.abspath(args.si_dir)
-    print(f"Tent TTA — seed={args.seed} epoch={epoch} steps={args.tta_steps} "
-          f"lr={args.tta_lr}\n  adapting: LayerNorm affine only (head + backbone "
-          f"otherwise frozen); transductive on the TEST-user set.")
+    print(f"TTA[{args.tta_method}] — seed={args.seed} epoch={epoch} "
+          f"steps={args.tta_steps} lr={args.tta_lr} div_w={args.div_weight}\n"
+          f"  adapting: LayerNorm affine only (head + backbone otherwise frozen); "
+          f"transductive on the TEST-user set.")
 
     for name in args.sources:
         _run_source(name, args.seed, epoch, ckpt, args.tta_steps, args.tta_lr,
                     args.batch_size, args.num_workers, args.image_size,
-                    args.results_csv, work_dir)
+                    args.results_csv, work_dir,
+                    method=args.tta_method, div_weight=args.div_weight)
 
 
 if __name__ == "__main__":

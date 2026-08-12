@@ -16,9 +16,8 @@ cp "$H/path3_handshape_benchmark/train_baseline.py"          "$R/path3_handshape
 cp "$H/path3_handshape_benchmark/configs/rsbdsl38_baseline.yaml" "$R/path3_handshape_benchmark/configs/"
 cp "$H/bangla_handshape/class_alignment.py"                   "$R/bangla_handshape/"
 
-# --- stage RSBdSL38 data into the scratch repo (idempotent, ~79 MB) ---
-mkdir -p "$R/data/RSBdSL38"
-rsync -a --ignore-existing "$H/data/RSBdSL38/" "$R/data/RSBdSL38/"
+# --- data pre-staged + verified by the bhc_stage job (single writer, no race) ---
+test -d "$R/data/RSBdSL38/train/37" || { echo "RSBdSL38 not staged on scratch"; exit 1; }
 
 cd "$R"; source ~/miniconda3/etc/profile.d/conda.sh; conda activate bdsl_graph
 export HF_HOME=/scratch/$USER/hf_cache TORCH_HOME=/scratch/$USER/torch_cache \

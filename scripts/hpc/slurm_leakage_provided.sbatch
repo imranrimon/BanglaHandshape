@@ -19,13 +19,9 @@ cp "$H/path3_handshape_benchmark/eval_leakage.py"          "$R/path3_handshape_b
 cp "$H/path3_handshape_benchmark/eval_leakage_provided.py" "$R/path3_handshape_benchmark/"
 cp "$H/bangla_handshape/class_alignment.py"                "$R/bangla_handshape/"
 
-# --- stage this task's data into the scratch repo (compute node can write scratch) ---
+# --- data pre-staged by the bhc_stage job (RSBdSL38) / already on scratch (BDSL49) ---
 if [ "$src" = "rsbdsl38" ]; then
-  mkdir -p "$R/data/RSBdSL38"
-  rsync -a --ignore-existing "$H/data/RSBdSL38/" "$R/data/RSBdSL38/"
-else
-  mkdir -p "$R/data/bdsl49_extracted"
-  rsync -a --ignore-existing "$H/data/bdsl49_extracted/" "$R/data/bdsl49_extracted/"
+  test -d "$R/data/RSBdSL38/train/37" || { echo "RSBdSL38 not staged"; exit 1; }
 fi
 
 cd "$R"; source ~/miniconda3/etc/profile.d/conda.sh; conda activate bdsl_graph

@@ -235,6 +235,49 @@ def _collate(batch):
     return imgs, src, labels, tlogs, det
 
 
+def _rgb_teacher_logits(spec, tr_items, ytr, cfg, kd, device):
+    """E5 control: a FROZEN RGB teacher (backbone + a head re-fit on its frozen
+    train features) produces per-train-item logits to distil. Tests whether the
+    distillation gain is generic KD rather than pose-specific. Returns
+    (logits[N,C] float32, detected[N] uint8=all-ones)."""
+    from sklearn.linear_model import LogisticRegression
+    timm_name = kd.get("teacher_timm", "vit_base_patch14_dinov2.lvd142m")
+    ckpt = kd.get("teacher_ckpt", None)
+    m = build_dinov2_lora(
+        num_classes_per_source=[spec.num_classes], timm_name=timm_name,
+        lora_rank=int(kd.get("teacher_lora_rank", 0)),
+        lora_targets=kd.get("teacher_lora_targets") or [],
+        pretrained=True, full_finetune=False).to(device).eval()
+    if ckpt and os.path.exists(ckpt):
+        m.backbone.load_state_dict(torch.load(ckpt, map_location="cpu"), strict=False)
+        print(f"    [rgb-teacher] loaded {os.path.basename(ckpt)}", flush=True)
+    ds = HandshapeDataset([(spec, tr_items)],
+                          transform=_build_transforms(int(cfg.get("image_size", 224))))
+    loader = DataLoader(ds, batch_size=64, shuffle=False,
+                        num_workers=int(cfg.get("num_workers", 4)),
+                        pin_memory=torch.cuda.is_available())
+    feats = []
+    with torch.no_grad():
+        for x, _s, _y in loader:
+            feats.append(m.features(x.to(device, non_blocking=True)).float().cpu().numpy())
+    del m
+    if device.type == "cuda":
+        torch.cuda.empty_cache()
+    X = np.concatenate(feats)
+    clf = LogisticRegression(max_iter=2000).fit(X, ytr)
+    dfun = clf.decision_function(X)
+    C = int(spec.num_classes)
+    logits = np.full((len(ytr), C), -1e4, dtype=np.float32)
+    classes = clf.classes_
+    if dfun.ndim == 1:                      # binary
+        logits[:, int(classes[1])] = dfun
+        logits[:, int(classes[0])] = -dfun
+    else:
+        for j, c in enumerate(classes):
+            logits[:, int(c)] = dfun[:, j]
+    return logits, np.ones(len(ytr), dtype=np.uint8)
+
+
 def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
     _init_seed(seed)
     base_exp = cfg.get("Experiment_name", "bhc_distill")
@@ -252,11 +295,19 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
 
     sp = cfg.get("split", {})
     kd = cfg.get("kd", {})
+    # E5 control modes: pose_logit (ours), rgb_logit (KD-itself control),
+    # label_smoothing / none (generic-regularization / no-KD controls).
+    mode = str(kd.get("mode", "pose_logit"))
     lambda_kd = float(kd.get("lambda", 1.0))
+    if mode in ("label_smoothing", "none"):
+        lambda_kd = 0.0
+    label_smoothing = float(kd.get("label_smoothing", 0.0))
     temperature = float(kd.get("temperature", 2.0))
     teacher_epochs = int(kd.get("teacher_epochs", 50))
     teacher_hidden = int(kd.get("teacher_hidden", 256))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"[seed {seed}] KD mode={mode} lambda={lambda_kd} Ts={temperature} "
+          f"label_smoothing={label_smoothing}", flush=True)
 
     # ---- Per-source split + teacher soft-logit computation -------------------
     train_pairs, val_pairs = [], []
@@ -266,25 +317,31 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
         train_pairs.append((spec, tr_items))
         val_pairs.append((spec, va_items))
 
-        kp = _kp_lookup(spec.name)
-        if kp is None:
-            print(f"[WARN] no keypoint cache for {spec.name} "
-                  f"(run extract_keypoints.py); NO KD signal for this source "
-                  f"(CE-only)", flush=True)
-        KPtr, dtr = _kp_matrix(tr_items, kp)
         ytr = np.array([it[1] for it in tr_items], dtype=np.int64)
-        det_rate = 100.0 * dtr.sum() / max(1, len(dtr))
-        print(f"[{spec.name} seed{seed}] train={len(tr_items)} val={len(va_items)} "
-              f"C={spec.num_classes} kp_det={det_rate:.1f}%", flush=True)
-
-        # Teacher trained on TRAIN signers only, then frozen.
-        teacher = _train_teacher(KPtr, ytr, dtr, spec.num_classes, device,
-                                 seed=seed, epochs=teacher_epochs,
-                                 hidden=teacher_hidden)
-        tlog = _teacher_logits(teacher, KPtr, dtr, spec.num_classes, device)
+        if mode in ("label_smoothing", "none"):
+            tlog = np.zeros((len(tr_items), spec.num_classes), dtype=np.float32)
+            dtr = np.zeros(len(tr_items), dtype=np.uint8)
+            print(f"[{spec.name} seed{seed}] train={len(tr_items)} val={len(va_items)} "
+                  f"C={spec.num_classes} (no KD; mode={mode})", flush=True)
+        elif mode == "rgb_logit":
+            tlog, dtr = _rgb_teacher_logits(spec, tr_items, ytr, cfg, kd, device)
+            print(f"[{spec.name} seed{seed}] train={len(tr_items)} val={len(va_items)} "
+                  f"C={spec.num_classes} (RGB-teacher KD)", flush=True)
+        else:  # pose_logit (ours, default) -- keypoint teacher trained on train signers
+            kp = _kp_lookup(spec.name)
+            if kp is None:
+                print(f"[WARN] no keypoint cache for {spec.name}; CE-only here", flush=True)
+            KPtr, dtr = _kp_matrix(tr_items, kp)
+            det_rate = 100.0 * dtr.sum() / max(1, len(dtr))
+            print(f"[{spec.name} seed{seed}] train={len(tr_items)} val={len(va_items)} "
+                  f"C={spec.num_classes} kp_det={det_rate:.1f}%", flush=True)
+            teacher = _train_teacher(KPtr, ytr, dtr, spec.num_classes, device,
+                                     seed=seed, epochs=teacher_epochs,
+                                     hidden=teacher_hidden)
+            tlog = _teacher_logits(teacher, KPtr, dtr, spec.num_classes, device)
+            del teacher
         teacher_logits_per_source.append(tlog)
         detected_per_source.append(dtr)
-        del teacher
         if device.type == "cuda":
             torch.cuda.empty_cache()
 
@@ -356,7 +413,8 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
         print(f"[seed {seed}] epoch {epoch+1}/{num_epoch}")
         _train_kd_epoch(model, loader_train, optimizer, device, scaler,
                         lambda_kd=lambda_kd, temperature=temperature,
-                        grad_clip=grad_clip, log_every=log_every)
+                        grad_clip=grad_clip, log_every=log_every,
+                        label_smoothing=label_smoothing)
         accs = evaluate(model, loader_val, device)   # IMAGES ONLY
         for src_i, acc in accs.items():
             name = ds_train.source_names()[src_i]
@@ -386,7 +444,8 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
 
 
 def _train_kd_epoch(model, loader, optimizer, device, scaler, *,
-                    lambda_kd, temperature, grad_clip=1.0, log_every=50):
+                    lambda_kd, temperature, grad_clip=1.0, log_every=50,
+                    label_smoothing=0.0):
     """One epoch of CE + KD. Preserves the true-source-index contract: forward
     returns (true_src_idx, mask_in_batch, logits); we index the batch's
     teacher-logit list and detected-flag by the SAME mask, so per-source KD is
@@ -410,7 +469,8 @@ def _train_kd_epoch(model, loader, optimizer, device, scaler, *,
                 if not mask.any():
                     continue
                 tgt = labels[mask]
-                ce_terms.append(F.cross_entropy(logits, tgt, reduction="sum"))
+                ce_terms.append(F.cross_entropy(logits, tgt, reduction="sum",
+                                                label_smoothing=label_smoothing))
                 n_ce += int(mask.sum().item())
                 # Teacher logits for THIS source's samples, in mask order. tlogs
                 # is a per-sample list keyed by batch position; select by mask.

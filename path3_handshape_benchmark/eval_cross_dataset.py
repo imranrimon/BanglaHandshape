@@ -158,9 +158,18 @@ def main():
     )
     ap.add_argument("--timm-name", default="vit_small_patch14_dinov2.lvd142m")
     ap.add_argument("--output", default="results/S2_transfer_matrix.md")
+    ap.add_argument("--only-sources", nargs="+", default=None,
+                    help="restrict the matrix to this subset of discovered sources "
+                         "(e.g. a focused BdSL47<->RSBdSL38 cross-dataset matrix)")
     args = ap.parse_args()
 
     sources = discover_default(repo_root=".")
+    if args.only_sources:
+        want = set(args.only_sources)
+        sources = [s for s in sources if s.name in want]
+        missing = want - {s.name for s in sources}
+        if missing:
+            print(f"[WARN] --only-sources not on disk (skipped): {sorted(missing)}")
     if not sources:
         raise RuntimeError("no sources discovered on disk")
     source_names = [s.name for s in sources]

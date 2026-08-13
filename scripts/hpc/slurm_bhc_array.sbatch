@@ -32,10 +32,11 @@ mkdir -p slurm_logs results
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate bdsl_graph
 export PYTHONIOENCODING=utf-8          # DollySods locale is often ASCII
-export CAMPAIGN_NW=8                    # data on scratch -> workers OK; set 0 if on NFS and it hangs
-# reuse the login-node-warmed weight cache so tasks skip multi-GB HF/torch downloads
-export HF_HOME=/scratch/$USER/hf_cache
-export TORCH_HOME=/scratch/$USER/torch_cache
+export CAMPAIGN_NW=4                    # BH data on NFS home; keep workers modest (set 0 if it hangs)
+# reuse the login-node-warmed weight cache so tasks skip multi-GB HF/torch downloads.
+# BH_home is entirely on home (not scratch), so cache under $HOME (visible on every node).
+export HF_HOME="$HOME/hf_cache"
+export TORCH_HOME="$HOME/torch_cache"
 export HF_HUB_OFFLINE=1                 # compute nodes have NO outbound HTTPS
 export TRANSFORMERS_OFFLINE=1           # -> use the warmed cache only, fail fast if missing
 

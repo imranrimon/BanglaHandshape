@@ -1,48 +1,48 @@
 source,class_folder,proposed_bengali,confirmed_bengali,selected_fingers,thumb,flexion,spread,contact,aperture,expert_confidence,notes
-bdsl47_letters,Sign 0,অ,,,,,,,,,
-bdsl47_letters,Sign 1,আ,,,,,,,,,
-bdsl47_letters,Sign 2,ই,,,,,,,,,
-bdsl47_letters,Sign 3,ঈ,,,,,,,,,
-bdsl47_letters,Sign 4,উ,,,,,,,,,
-bdsl47_letters,Sign 5,ঊ,,,,,,,,,
-bdsl47_letters,Sign 6,ঋ,,,,,,,,,
-bdsl47_letters,Sign 7,এ,,,,,,,,,
-bdsl47_letters,Sign 8,ঐ,,,,,,,,,
-bdsl47_letters,Sign 9,ও,,,,,,,,,
-bdsl47_letters,Sign 10,ঔ,,,,,,,,,
-bdsl47_letters,Sign 11,ক,,,,,,,,,
-bdsl47_letters,Sign 12,খ,,,,,,,,,
-bdsl47_letters,Sign 13,গ,,,,,,,,,
-bdsl47_letters,Sign 14,ঘ,,,,,,,,,
-bdsl47_letters,Sign 15,ঙ,,,,,,,,,
-bdsl47_letters,Sign 16,চ,,,,,,,,,
-bdsl47_letters,Sign 17,ছ,,,,,,,,,
-bdsl47_letters,Sign 18,জ,,,,,,,,,
-bdsl47_letters,Sign 19,ঝ,,,,,,,,,
-bdsl47_letters,Sign 20,ঞ,,,,,,,,,
-bdsl47_letters,Sign 21,ট,,,,,,,,,
-bdsl47_letters,Sign 22,ঠ,,,,,,,,,
-bdsl47_letters,Sign 23,ড,,,,,,,,,
-bdsl47_letters,Sign 24,ঢ,,,,,,,,,
-bdsl47_letters,Sign 25,ণ,,,,,,,,,
-bdsl47_letters,Sign 26,ত,,,,,,,,,
-bdsl47_letters,Sign 27,থ,,,,,,,,,
-bdsl47_letters,Sign 28,দ,,,,,,,,,
-bdsl47_letters,Sign 29,ধ,,,,,,,,,
-bdsl47_letters,Sign 30,ন,,,,,,,,,
-bdsl47_letters,Sign 31,প,,,,,,,,,
-bdsl47_letters,Sign 32,ফ,,,,,,,,,
-bdsl47_letters,Sign 33,ব,,,,,,,,,
-bdsl47_letters,Sign 34,ভ,,,,,,,,,
-bdsl47_letters,Sign 35,ম,,,,,,,,,
-bdsl47_letters,Sign 36,য,,,,,,,,,
-bdsl47_digits,Sign 0,০,,,,,,,,,
-bdsl47_digits,Sign 1,১,,,,,,,,,
-bdsl47_digits,Sign 2,২,,,,,,,,,
-bdsl47_digits,Sign 3,৩,,,,,,,,,
-bdsl47_digits,Sign 4,৪,,,,,,,,,
-bdsl47_digits,Sign 5,৫,,,,,,,,,
-bdsl47_digits,Sign 6,৬,,,,,,,,,
-bdsl47_digits,Sign 7,৭,,,,,,,,,
-bdsl47_digits,Sign 8,৮,,,,,,,,,
-bdsl47_digits,Sign 9,৯,,,,,,,,,
+bdsl47_digits,Sign 0,০,,I M R P,extended,straight,spread,none,open,low,"DRAFT (machine, from contact sheet — VERIFY): open spread hand; may be O-variant in canon"
+bdsl47_digits,Sign 1,১,,I,tucked,straight,na,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): single index up"
+bdsl47_digits,Sign 2,২,,I M,tucked,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): two fingers (V)"
+bdsl47_digits,Sign 3,৩,,I M R,tucked,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): three fingers"
+bdsl47_digits,Sign 4,৪,,I M R P,tucked,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): four fingers, thumb tucked"
+bdsl47_digits,Sign 5,৫,,I M R P,extended,straight,spread,none,open,low,"DRAFT (machine, from contact sheet — VERIFY): open five"
+bdsl47_digits,Sign 6,৬,,I M R P,opposed,curved,together,none,open,low,"DRAFT (machine, from contact sheet — VERIFY): curved '6'; uncertain"
+bdsl47_digits,Sign 7,৭,,I M,extended,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): two fingers angled"
+bdsl47_digits,Sign 8,৮,,I M,extended,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): thumb+2; uncertain"
+bdsl47_digits,Sign 9,৯,,none,extended,fist,na,none,closed,low,"DRAFT (machine, from contact sheet — VERIFY): thumb/fist"
+bdsl47_letters,Sign 00,অ,,none,side,fist,na,none,closed,low,"DRAFT (machine, from contact sheet — VERIFY): A-hand fist, thumb to side"
+bdsl47_letters,Sign 01,আ,,I M R P,extended,straight,spread,none,open,low,"DRAFT (machine, from contact sheet — VERIFY): open hand"
+bdsl47_letters,Sign 02,ই,,I,opposed,curved,na,thumb-index,tight-O,low,"DRAFT (machine, from contact sheet — VERIFY): thumb-index near, index up"
+bdsl47_letters,Sign 03,ঈ,,I,opposed,curved,na,thumb-index,tight-O,low,"DRAFT (machine, from contact sheet — VERIFY): like 02, longer"
+bdsl47_letters,Sign 04,উ,,I M,opposed,curved,together,thumb-index,tight-O,low,"DRAFT (machine, from contact sheet — VERIFY): pinched fingers up"
+bdsl47_letters,Sign 05,ঊ,,none,tucked,fist,na,none,closed,low,"DRAFT (machine, from contact sheet — VERIFY): small closed fist"
+bdsl47_letters,Sign 06,ঋ,,none,opposed,curved,na,thumb-index,flat-O,low,"DRAFT (machine, from contact sheet — VERIFY): O / thumb-index circle"
+bdsl47_letters,Sign 07,এ,,none,opposed,curved,na,thumb-index,tight-O,low,"DRAFT (machine, from contact sheet — VERIFY): O shape"
+bdsl47_letters,Sign 08,ঐ,,none,opposed,curved,na,thumb-index,tight-O,low,"DRAFT (machine, from contact sheet — VERIFY): O shape"
+bdsl47_letters,Sign 09,ও,,none,opposed,curved,na,thumb-index,flat-O,low,"DRAFT (machine, from contact sheet — VERIFY): O / rounded"
+bdsl47_letters,Sign 10,ঔ,,none,across,fist,na,none,closed,low,"DRAFT (machine, from contact sheet — VERIFY): closed fist"
+bdsl47_letters,Sign 11,ক,,I,opposed,straight,na,thumb-index,tight-O,low,"DRAFT (machine, from contact sheet — VERIFY): thumb-index pinch"
+bdsl47_letters,Sign 12,খ,,none,opposed,curved,na,thumb-index,flat-O,low,"DRAFT (machine, from contact sheet — VERIFY): pinch / O"
+bdsl47_letters,Sign 13,গ,,M R P,opposed,straight,spread,thumb-index,flat-O,low,"DRAFT (machine, from contact sheet — VERIFY): OK: thumb-index circle, 3 fingers up"
+bdsl47_letters,Sign 14,ঘ,,M R P,opposed,straight,spread,thumb-index,flat-O,low,"DRAFT (machine, from contact sheet — VERIFY): OK-like"
+bdsl47_letters,Sign 15,ঙ,,I,tucked,straight,na,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): single index up"
+bdsl47_letters,Sign 16,চ,,none,across,fist,na,cross,closed,low,"DRAFT (machine, from contact sheet — VERIFY): fist, thumb across (dark bg)"
+bdsl47_letters,Sign 17,ছ,,I M,tucked,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): V / two fingers"
+bdsl47_letters,Sign 18,জ,,I M,tucked,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): V spread"
+bdsl47_letters,Sign 19,ঝ,,M R P,opposed,straight,spread,thumb-index,flat-O,low,"DRAFT (machine, from contact sheet — VERIFY): OK, 3 fingers up"
+bdsl47_letters,Sign 20,ঞ,,I,tucked,straight,na,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): index up"
+bdsl47_letters,Sign 21,ট,,I M,tucked,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): two fingers angled"
+bdsl47_letters,Sign 22,ঠ,,I,extended,straight,na,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): index up + thumb"
+bdsl47_letters,Sign 23,ড,,I M,tucked,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): two fingers"
+bdsl47_letters,Sign 24,ঢ,,I M R P,side,straight,together,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): flat hand, fingers together, angled"
+bdsl47_letters,Sign 25,ণ,,I M,side,bent,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): bent fingers / claw"
+bdsl47_letters,Sign 26,ত,,I M R P,extended,curved,spread,none,open,low,"DRAFT (machine, from contact sheet — VERIFY): spread curved (claw-5)"
+bdsl47_letters,Sign 27,থ,,I M R P,side,straight,together,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): flat hand pointing forward"
+bdsl47_letters,Sign 28,দ,,none,opposed,curved,na,thumb-index,tight-O,low,"DRAFT (machine, from contact sheet — VERIFY): pinch/O pointing down (dark)"
+bdsl47_letters,Sign 29,ধ,,none,side,fist,na,none,closed,low,"DRAFT (machine, from contact sheet — VERIFY): fist + thumb"
+bdsl47_letters,Sign 30,ন,,I M R,tucked,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): three fingers up"
+bdsl47_letters,Sign 31,প,,I,tucked,straight,na,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): single index"
+bdsl47_letters,Sign 32,ফ,,I,extended,straight,na,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): index up, thumb extended (L)"
+bdsl47_letters,Sign 33,ব,,I M,opposed,curved,together,thumb-index,tight-O,low,"DRAFT (machine, from contact sheet — VERIFY): pinched fingers up"
+bdsl47_letters,Sign 34,ভ,,I M,tucked,straight,spread,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): two fingers up"
+bdsl47_letters,Sign 35,ম,,I M R P,side,straight,together,none,na,low,"DRAFT (machine, from contact sheet — VERIFY): flat hand fingers together"
+bdsl47_letters,Sign 36,য,,none,across,fist,na,none,closed,low,"DRAFT (machine, from contact sheet — VERIFY): fist"

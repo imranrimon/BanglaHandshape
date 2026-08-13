@@ -48,8 +48,11 @@ and, ideally, `hamnosys` once per confirmed group.
 
 ## Protocol (≈ the same effort as reading a 178-row sheet once)
 
-1. Work top-down. The first block is the single group that already spans ≥2 sources —
-   confirm/split it first; cross-source groups are what LODO trains and tests on.
+1. Work top-down. The first blocks are the 2 groups that already span ≥2 sources —
+   confirm/split them first; cross-source groups are what LODO trains and tests on.
+   Then extend coverage: most same-handshape/different-dataset pairs sit just below
+   the cosine threshold (domain shift), so the expert's `merge_into`/`reassign`
+   decisions are where the real cross-corpus taxonomy is built.
 2. For each group, judge the members by the images (`n_images` per class on disk) and
    the cross-source evidence columns. Use the decision codes above.
 3. Fill `canonical_name` / `hamnosys` per confirmed group.
@@ -59,9 +62,11 @@ and, ideally, `hamnosys` once per confirmed group.
        --workbook alignment/handshape_alignment.verified.csv \
        --out alignment/handshape_alignment.json      # sets "verified": true
    ```
-   *(`compile_verified_alignment.py` is the small deterministic reducer that turns the
-   decision column into the contiguous-id `handshape_alignment.json` schema; add it
-   when verification begins — it has no data/GPU dependency.)*
+   *(`tools/compile_verified_alignment.py` is the small deterministic reducer that
+   turns the decision column into the contiguous-id `handshape_alignment.json`
+   schema. It is scaffolded and self-tested. Pass `--mark-verified` only after a
+   qualified annotator has reviewed; without it the JSON stays `verified:false` and
+   `run_lodo` warns. It has no data/GPU dependency.)*
 5. Run LODO:
    ```bash
    python -m path3_handshape_benchmark.run_lodo \
@@ -71,35 +76,39 @@ and, ideally, `hamnosys` once per confirmed group.
 
 ---
 
-## ⚠️ Compute prerequisite before verification is worthwhile
+## Compute prerequisite: DONE (4-source threshold sweep, 2026-08-12)
 
-The current workbook is built from the **0.92-threshold** proposal, which
-**under-merges**: only **1** candidate group spans ≥2 sources, so LODO coverage would
-be near-zero. Two things must happen first, both needing all five sources on disk
-(BdSL47, BdSL-MNIST, BSLD_45, BDSL49, RSBdSL38 — only the last two are currently
-present):
+Three of the five sources were re-fetched (BdSL-MNIST from Mendeley; BdSL47
+Digits+Letters from the Dryad mirror), joining the existing RSBdSL38 + BDSL49 →
+**4 datasets / 5 source entries** on disk (`bdsl_mnist`, `bdsl47_digits`,
+`bdsl47_letters`, `bdsl49_recognition`, `rsbdsl38`). **BSLD\_45 remains
+unobtainable** (no verified public source; the `rayeed045` slug is BdSL47), so the
+sweep runs on 4 datasets, not 5.
 
-1. **Re-fetch** the missing sources (`docs/SISTER_PAPER_DATA_REFETCH.md`).
-2. **Re-run the proposer sweeping the threshold down** so groups actually merge across
-   sources (the DINOv2 hand-crop prototypes sit at high cosine):
-   ```bash
-   for T in 0.90 0.88 0.86; do
-     python -m path3_handshape_benchmark.propose_alignment \
-        --sim-threshold $T \
-        --out alignment/handshape_alignment.proposed_$T.json \
-        --review-csv alignment/handshape_alignment_review_$T.csv
-   done
-   # then rebuild the workbook off the threshold whose cross-source coverage is best:
-   python -m tools.build_taxonomy_workbook \
-        --review-csv alignment/handshape_alignment_review_0.90.csv \
-        --proposed-json alignment/handshape_alignment.proposed_0.90.json
-   ```
-   `scripts/hpc/slurm_propose.sbatch` runs this on the cluster (fill `<PARTITION>`).
-   Pick the threshold that maximises `group_sources ≥ 2` without collapsing distinct
-   handshapes — the `build_taxonomy_workbook` summary line reports that count.
+The proposer was re-run as a parallel array (`scripts/hpc/slurm_propose_sweep.sbatch`)
+over thresholds 0.90 / 0.88 / 0.86 (145 DINOv2-B prototypes across the 5 source
+entries). Cross-source coverage:
 
-Only after a threshold with real cross-source coverage is the human verification a
-good use of the expert's time.
+| threshold | canonical groups K | groups spanning ≥2 sources |
+|---|---|---|
+| **0.90** | 21 | **2** |
+| 0.88 | 14 | 2 |
+| 0.86 | 11 | 1 |
+
+`alignment/verification_workbook.csv` is now rebuilt off the **0.90** proposal
+(finest grouping with peak cross-source coverage): 145 members, 21 candidate groups.
+
+**Honest finding — visual clustering under-merges across corpora.** Even with 4
+datasets and aggressive thresholds, at most **2** handshape groups span ≥2 sources,
+and 137/145 classes are flagged `needs_review`. Frozen DINOv2 hand-crop prototypes
+are dominated by per-dataset domain shift (capture conditions, background, image
+style) rather than handshape identity, so same-handshape/different-dataset pairs sit
+below cosine 0.86. **The bottleneck is therefore expert linguistic verification, not
+compute or threshold** — a native-signer/SL-linguist must supply the cross-corpus
+`merge_into`/`reassign` decisions the visual proposer cannot. The workbook's 2
+cross-source seeds are the starting point; the expert extends them. Until that
+verification exists, LODO stays future work (do not report it off the unverified,
+visually-under-merged map).
 
 ---
 

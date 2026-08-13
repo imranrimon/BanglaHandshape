@@ -44,3 +44,4 @@ paper/*.pdf
 paper/*.bbl
 paper/*.blg
 paper/*.out
+slurm_logs/

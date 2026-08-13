@@ -226,11 +226,30 @@ def main():
         C = _confusability(cm)
         iu = np.triu_indices(n, 1)
         rho, npair = _spearman(S[iu], C[iu])
+        # magnitude-aware interpretation (a near-zero rho does NOT support E15;
+        # with a low-confidence DRAFT feature coding it most likely reflects coding
+        # coarseness rather than the linguistic hypothesis).
+        a = abs(rho)
+        if a < 0.10:
+            verdict = (f"|rho|={a:.3f} is negligible: this does NOT support E15. With "
+                       "the current low-confidence machine-draft feature coding, a "
+                       "near-zero rho most likely reflects coding coarseness (identical "
+                       "codings collapse similarity), so a verified expert coding is "
+                       "needed before drawing any conclusion.")
+        elif rho <= -0.10:
+            verdict = (f"rho={rho:+.3f} is NEGATIVE: this contradicts E15 as coded "
+                       "(errors do not fall on articulatorily-similar handshapes).")
+        elif rho < 0.30:
+            verdict = (f"rho={rho:+.3f} is a WEAK positive: mild support for E15, but "
+                       "not conclusive; verify with expert coding.")
+        else:
+            verdict = (f"rho={rho:+.3f} is a MODERATE-or-stronger positive: supports "
+                       "E15 — signer-shift errors concentrate on articulatorily-similar "
+                       "handshapes.")
         lines += ["## Similarity vs SI confusability", "",
                   f"Spearman rho(S, confusability) = **{rho:+.3f}** over {npair} pairs.",
-                  "", "A positive rho supports E15: the signer-shift errors "
-                  "concentrate on articulatorily-similar handshapes.", ""]
-        print(f"[E15] rho(similarity, confusability) = {rho:+.3f} (n={npair})")
+                  "", verdict, ""]
+        print(f"[E15] rho(similarity, confusability) = {rho:+.3f} (n={npair}) -> {verdict.split(':')[0]}")
     elif cm is not None:
         lines += [f"> [warn] confusion matrix is {cm.shape}, expected {n}x{n} — "
                   "check it is in discover_source (lexicographic-folder) order.", ""]

@@ -16,11 +16,11 @@ import matplotlib.pyplot as plt
 
 # (label, decodability D/L, SI acc D/L, marker note)
 ROWS = [
-    ("Pose (keypoints)",       (54.0, 45.2), (99.9, 85.5)),
-    ("DINOv2-B (frozen)",      (100.0, 99.5), (81.3, 68.2)),
-    ("LoRA (plain)",           (99.8, 99.0), (94.4, 86.7)),
-    ("LoRA + pose-distill (ours)", (99.7, 98.6), (95.4, 88.6)),
-    ("LoRA + adversary",       (31.2, 28.5), (93.1, 85.3)),
+    ("Pose (keypoints)",       (54.1, 44.7), (99.9, 84.7)),
+    ("DINOv2-B (frozen)",      (100.0, 99.3), (81.4, 67.7)),
+    ("LoRA (plain)",           (99.7, 99.3), (94.4, 85.6)),
+    ("LoRA + pose-distill (ours)", (100.0, 99.1), (95.2, 88.2)),
+    ("LoRA + adversary",       (51.0, 37.8), (93.9, 85.7)),
 ]
 CHANCE = 12.5
 COL = {"Pose (keypoints)": "#2a9d8f", "DINOv2-B (frozen)": "#8d99ae",

@@ -74,3 +74,6 @@ Best regards,
 [Your name]
 [Department / West Virginia University]
 [email]
+
+### BDSL49 response (received 2026-08-14)
+Dr. Md. Rajibul Islam (BUBT) replied: the requested per-image participant mapping "wasn't included in the data curation process, so it is not available." **Outcome:** E17 is closed — BDSL49 cannot be made signer-independent without re-collection. Folded into the paper (BdSL47 = sole SI source). No further action.

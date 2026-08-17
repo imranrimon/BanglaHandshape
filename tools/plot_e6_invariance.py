@@ -1,63 +1,65 @@
-"""E6 (reviewer §9/§35): invariance scatter — signer decodability vs SI accuracy.
+"""E6 (reviewer): invariance scatter — signer decodability vs SI accuracy.
 
-Reviewer asked for a scatter of x = signer decodability (balanced acc of a signer
-classifier on frozen features, tab:probe) vs y = signer-independent handshape
-accuracy (tab:mitigate), across representations, to show the two axes are
-DECOUPLED: removing signer identity (adversary, low x) does not raise y, and our
-pose-distill gain arrives without removing it (high x).
+x = signer decodability (balanced acc of a signer classifier on frozen features,
+tab:probe; chance 12.5%, lower = more invariant); y = SI handshape Top-1
+(tab:mitigate). If invariance drove accuracy the points would trend; they do not
+--- the signer-adversary scrubs identity without helping, while pose-distill (ours)
+and plain LoRA keep identity fully decodable yet score highest.
 
-Numbers are transcribed from paper/main.tex tab:probe + tab:mitigate (no new
-compute). Chance signer acc = 12.5% (8 signers). Emits paper/figs/E6_invariance.*
+Numbers transcribed from paper/main.tex tab:probe + tab:mitigate (no new compute).
+Design: clean shared legend (no overlapping inline labels), large fonts, no
+in-figure title (the message lives in the LaTeX caption). Emits paper/figs/E6_invariance.*
 """
 import os
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
-# (label, decodability D/L, SI acc D/L, marker note)
+plt.rcParams.update({
+    "font.size": 13, "axes.labelsize": 14, "xtick.labelsize": 12,
+    "ytick.labelsize": 12, "legend.fontsize": 12, "axes.linewidth": 0.8,
+})
+
+# label -> (decodability D/L, SI acc D/L, color, marker, size)
 ROWS = [
-    ("Pose (keypoints)",       (54.1, 44.7), (99.9, 84.7)),
-    ("DINOv2-B (frozen)",      (100.0, 99.3), (81.4, 67.7)),
-    ("LoRA (plain)",           (99.7, 99.3), (94.4, 85.6)),
-    ("LoRA + pose-distill (ours)", (100.0, 99.1), (95.2, 88.2)),
-    ("LoRA + adversary",       (51.0, 37.8), (93.9, 85.7)),
+    ("Pose (keypoints)",           (54.1, 44.7), (99.9, 84.7), "#2a9d8f", "o", 130),
+    ("DINOv2-B (frozen)",          (100.0, 99.3), (81.4, 67.7), "#8d99ae", "s", 120),
+    ("LoRA (plain)",               (99.7, 99.3), (94.4, 85.6), "#457b9d", "D", 120),
+    ("LoRA + pose-distill (ours)", (100.0, 99.1), (95.2, 88.2), "#e63946", "*", 320),
+    ("LoRA + adversary",           (51.0, 37.8), (93.9, 85.7), "#f4a261", "^", 130),
 ]
 CHANCE = 12.5
-COL = {"Pose (keypoints)": "#2a9d8f", "DINOv2-B (frozen)": "#8d99ae",
-       "LoRA (plain)": "#457b9d", "LoRA + pose-distill (ours)": "#e63946",
-       "LoRA + adversary": "#f4a261"}
 
-fig, axes = plt.subplots(1, 2, figsize=(9.2, 4.3), sharey=False)
+fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.6), sharey=False)
 for ax, si, name in zip(axes, (0, 1), ("Digits", "Letters")):
-    for label, dec, acc in ROWS:
-        x, y = dec[si], acc[si]
-        star = "*" if "ours" in label else "o"
-        ax.scatter(x, y, s=150 if star == "*" else 90, marker=star,
-                   c=COL[label], edgecolors="black", linewidths=0.7,
-                   zorder=3, label=label)
-        dx = 1.5 if x < 90 else -2.0
-        ha = "left" if x < 90 else "right"
-        ax.annotate(label.replace(" + ", "\n+ "), (x, y), fontsize=7.3,
-                    xytext=(x + dx, y + (0.9 if si == 0 else 0.9)), ha=ha,
-                    va="bottom", zorder=4)
-    ax.axvline(CHANCE, ls=":", c="gray", lw=1)
-    ax.text(CHANCE + 1, ax.get_ylim()[0] if False else 0, "", fontsize=7)
-    ax.set_title(f"{name}", fontsize=11)
-    ax.set_xlabel("Signer decodability (balanced acc, %)  —  lower = more invariant")
-    ax.set_xlim(20, 108)
-    ax.grid(alpha=0.25, zorder=0)
-axes[0].set_ylabel("Signer-independent accuracy (%)")
-# a single de-duplicated legend
-h, l = axes[0].get_legend_handles_labels()
-seen = dict(zip(l, h))
-fig.legend(seen.values(), seen.keys(), loc="lower center", ncol=5,
-           fontsize=7.2, frameon=False, bbox_to_anchor=(0.5, -0.02))
-fig.suptitle("Invariance is decoupled from accuracy: removing signer identity "
-             "(adversary) does not raise SI accuracy;\nour gain (pose-distill) "
-             "arrives with signer identity still fully decodable",
-             fontsize=9.5, y=1.02)
-fig.tight_layout(rect=(0, 0.06, 1, 0.99))
+    for label, dec, acc, col, mk, sz in ROWS:
+        ax.scatter(dec[si], acc[si], s=sz, marker=mk, c=col,
+                   edgecolors="black", linewidths=0.9, zorder=3)
+    ax.set_xlim(5, 108)
+    ax.axvline(CHANCE, ls=":", c="0.5", lw=1.2, zorder=1)
+    ymin, ymax = ax.get_ylim()
+    ax.text(CHANCE + 2.0, ymax - 0.05 * (ymax - ymin), "chance", rotation=90,
+            fontsize=10, color="0.45", va="top")
+    ax.set_title(name, fontsize=15, pad=8)
+    ax.set_xlabel("Signer decodability (%)")
+    ax.margins(y=0.14)
+    ax.grid(alpha=0.3, zorder=0)
+axes[0].set_ylabel("Signer-independent Top-1 (%)")
+
+# one shared legend below (no overlapping inline labels)
+handles = [Line2D([0], [0], marker=mk, color="w", markerfacecolor=col,
+                  markeredgecolor="black", markersize=15 if mk == "*" else 11,
+                  linewidth=0, label=label)
+           for label, _, _, col, mk, _ in ROWS]
+fig.legend(handles=handles, loc="lower center", ncol=3, frameon=False,
+           bbox_to_anchor=(0.5, -0.02), columnspacing=1.6, handletextpad=0.4)
+# shared x-axis descriptor (won't clip — placed in reserved bottom margin)
+fig.text(0.5, 0.135, r"lower $\rightarrow$ more signer-invariant", ha="center",
+         fontsize=11, style="italic", color="0.35")
+
+fig.tight_layout(rect=(0, 0.20, 1, 1))
 os.makedirs("paper/figs", exist_ok=True)
-for ext in ("png", "pdf"):
-    fig.savefig(f"paper/figs/E6_invariance.{ext}", dpi=200, bbox_inches="tight")
-print("wrote paper/figs/E6_invariance.{png,pdf}")
+for ext in ("pdf", "png"):
+    fig.savefig(f"paper/figs/E6_invariance.{ext}", dpi=600, bbox_inches="tight")
+print("wrote paper/figs/E6_invariance.{pdf,png} @600dpi")

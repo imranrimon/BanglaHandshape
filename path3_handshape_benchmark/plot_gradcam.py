@@ -363,15 +363,15 @@ def main():
             ax.imshow(panel)
             ax.set_xticks([]); ax.set_yticks([])
             if r == 0:
-                ax.set_title(col_titles[c], fontsize=10)
-        axes[r][0].set_ylabel(f"class {label}", fontsize=8)
+                ax.set_title(col_titles[c], fontsize=17)
+        axes[r][0].set_ylabel(f"class {label}", fontsize=15)
     fig.suptitle(
-        f"Grad-CAM: SD vs SI on {spec.name} test images (SI users {args.test_users})\n"
-        "SD is free to use identity/background cues; SI must attend to the hand shape",
-        fontsize=11)
-    fig.tight_layout(rect=(0, 0, 1, 0.95))
-    fig.savefig(out, dpi=200)
-    print(f"wrote {out}")
+        f"Grad-CAM: SD vs. SI attention on {spec.name} test images",
+        fontsize=19)
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    for ext in ("pdf", "png"):
+        fig.savefig(os.path.splitext(out)[0] + "." + ext, dpi=600, bbox_inches="tight")
+    print(f"wrote {os.path.splitext(out)[0]}.{{pdf,png}} @600dpi")
     return 0
 
 

@@ -77,3 +77,6 @@ Best regards,
 
 ### BDSL49 response (received 2026-08-14)
 Dr. Md. Rajibul Islam (BUBT) replied: the requested per-image participant mapping "wasn't included in the data curation process, so it is not available." **Outcome:** E17 is closed — BDSL49 cannot be made signer-independent without re-collection. Folded into the paper (BdSL47 = sole SI source). No further action.
+
+### RSBdSL38 response (received 2026-08-13)
+Saad Ahmed (BAUST) released **V2** (doi 10.17632/tgvmb2jsdb.2) with the exact signer-independent train/val/test file lists (images provided directly, no participant list). **Outcome:** E13-faithful DONE — faithful within-RSBdSL38 SI = 91.6+/-0.2% (vs 96.9% leaky provided split). Folded into the paper.

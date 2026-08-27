@@ -1,0 +1,38 @@
+# E5 CONTROL (is the gain generic KD?): distil from a FROZEN RGB teacher
+# (DINOv2-B + a head refit on its frozen train features) instead of the pose
+# teacher. If this matches the pose-distill gain, KD itself (not pose geometry) is
+# responsible. Same student encoder/split as bdsl47_si_distill.yaml.
+Experiment_name: bhc_bdsl47_si_distill_rgbkd
+
+sources:
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+
+split:
+  val_users: [4]
+  test_users: [5]
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj, mlp.fc1, mlp.fc2]
+
+kd:
+  mode: rgb_logit
+  lambda: 1.0
+  temperature: 2.0
+  teacher_timm: vit_base_patch14_dinov2.lvd142m   # frozen RGB teacher
+  teacher_lora_rank: 0
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 50
+base_lr: 0.0005
+weight_decay: 0.01
+grad_clip: 1.0
+save_interval: 1
+work_dir: ./work_dir/bhc_bdsl47_si_distill_rgbkd

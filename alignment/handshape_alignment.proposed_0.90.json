@@ -1,0 +1,268 @@
+{
+  "version": "0.1",
+  "verified": false,
+  "canonical": {
+    "0": {
+      "name": "cluster_0",
+      "hamnosys": "",
+      "notes": "auto: 16 classes from 1 sources"
+    },
+    "1": {
+      "name": "cluster_1",
+      "hamnosys": "",
+      "notes": "auto: 2 classes from 1 sources"
+    },
+    "2": {
+      "name": "cluster_2",
+      "hamnosys": "",
+      "notes": "auto: 3 classes from 1 sources"
+    },
+    "3": {
+      "name": "cluster_3",
+      "hamnosys": "",
+      "notes": "auto: 10 classes from 1 sources"
+    },
+    "4": {
+      "name": "cluster_4",
+      "hamnosys": "",
+      "notes": "auto: 4 classes from 1 sources"
+    },
+    "5": {
+      "name": "cluster_5",
+      "hamnosys": "",
+      "notes": "auto: 2 classes from 1 sources"
+    },
+    "6": {
+      "name": "cluster_6",
+      "hamnosys": "",
+      "notes": "auto: 19 classes from 2 sources"
+    },
+    "7": {
+      "name": "cluster_7",
+      "hamnosys": "",
+      "notes": "auto: 4 classes from 2 sources"
+    },
+    "8": {
+      "name": "cluster_8",
+      "hamnosys": "",
+      "notes": "auto: 24 classes from 1 sources"
+    },
+    "9": {
+      "name": "cluster_9",
+      "hamnosys": "",
+      "notes": "auto: 6 classes from 1 sources"
+    },
+    "10": {
+      "name": "cluster_10",
+      "hamnosys": "",
+      "notes": "auto: 2 classes from 1 sources"
+    },
+    "11": {
+      "name": "cluster_11",
+      "hamnosys": "",
+      "notes": "auto: 8 classes from 1 sources"
+    },
+    "12": {
+      "name": "cluster_12",
+      "hamnosys": "",
+      "notes": "auto: 2 classes from 1 sources"
+    },
+    "13": {
+      "name": "cluster_13",
+      "hamnosys": "",
+      "notes": "auto: 1 classes from 1 sources"
+    },
+    "14": {
+      "name": "cluster_14",
+      "hamnosys": "",
+      "notes": "auto: 1 classes from 1 sources"
+    },
+    "15": {
+      "name": "cluster_15",
+      "hamnosys": "",
+      "notes": "auto: 1 classes from 1 sources"
+    },
+    "16": {
+      "name": "cluster_16",
+      "hamnosys": "",
+      "notes": "auto: 1 classes from 1 sources"
+    },
+    "17": {
+      "name": "cluster_17",
+      "hamnosys": "",
+      "notes": "auto: 1 classes from 1 sources"
+    },
+    "18": {
+      "name": "cluster_18",
+      "hamnosys": "",
+      "notes": "auto: 32 classes from 1 sources"
+    },
+    "19": {
+      "name": "cluster_19",
+      "hamnosys": "",
+      "notes": "auto: 5 classes from 1 sources"
+    },
+    "20": {
+      "name": "cluster_20",
+      "hamnosys": "",
+      "notes": "auto: 1 classes from 1 sources"
+    }
+  },
+  "map": {
+    "bdsl_mnist": {
+      "0": 0,
+      "1": 1,
+      "10": 2,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 3,
+      "17": 3,
+      "18": 0,
+      "19": 4,
+      "2": 0,
+      "20": 0,
+      "21": 3,
+      "22": 0,
+      "23": 4,
+      "24": 3,
+      "25": 3,
+      "26": 3,
+      "27": 2,
+      "28": 5,
+      "29": 5,
+      "3": 0,
+      "30": 1,
+      "31": 3,
+      "32": 3,
+      "33": 4,
+      "34": 3,
+      "35": 3,
+      "36": 4,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 2
+    },
+    "bdsl47_digits": {
+      "Sign 0": 6,
+      "Sign 1": 6,
+      "Sign 2": 6,
+      "Sign 3": 6,
+      "Sign 4": 6,
+      "Sign 5": 6,
+      "Sign 6": 7,
+      "Sign 7": 6,
+      "Sign 8": 6,
+      "Sign 9": 7
+    },
+    "bdsl47_letters": {
+      "Sign 00": 8,
+      "Sign 01": 6,
+      "Sign 02": 8,
+      "Sign 03": 8,
+      "Sign 04": 8,
+      "Sign 05": 8,
+      "Sign 06": 8,
+      "Sign 07": 8,
+      "Sign 08": 8,
+      "Sign 09": 8,
+      "Sign 10": 6,
+      "Sign 11": 8,
+      "Sign 12": 8,
+      "Sign 13": 8,
+      "Sign 14": 8,
+      "Sign 15": 8,
+      "Sign 16": 6,
+      "Sign 17": 6,
+      "Sign 18": 8,
+      "Sign 19": 8,
+      "Sign 20": 8,
+      "Sign 21": 6,
+      "Sign 22": 8,
+      "Sign 23": 8,
+      "Sign 24": 8,
+      "Sign 25": 6,
+      "Sign 26": 7,
+      "Sign 27": 7,
+      "Sign 28": 6,
+      "Sign 29": 6,
+      "Sign 30": 6,
+      "Sign 31": 8,
+      "Sign 32": 6,
+      "Sign 33": 8,
+      "Sign 34": 6,
+      "Sign 35": 8,
+      "Sign 36": 8
+    },
+    "bdsl49_recognition": {
+      "0": 9,
+      "1": 9,
+      "10": 10,
+      "11": 11,
+      "12": 12,
+      "13": 13,
+      "14": 11,
+      "15": 14,
+      "16": 11,
+      "17": 11,
+      "18": 11,
+      "19": 15,
+      "2": 9,
+      "20": 16,
+      "21": 12,
+      "22": 11,
+      "3": 9,
+      "4": 9,
+      "5": 9,
+      "6": 11,
+      "7": 10,
+      "8": 17,
+      "9": 11
+    },
+    "rsbdsl38": {
+      "0": 18,
+      "1": 18,
+      "10": 18,
+      "11": 18,
+      "12": 19,
+      "13": 18,
+      "14": 18,
+      "15": 18,
+      "16": 18,
+      "17": 18,
+      "18": 18,
+      "19": 19,
+      "2": 18,
+      "20": 18,
+      "21": 18,
+      "22": 18,
+      "23": 19,
+      "24": 18,
+      "25": 18,
+      "26": 18,
+      "27": 18,
+      "28": 18,
+      "29": 18,
+      "3": 18,
+      "30": 18,
+      "31": 18,
+      "32": 18,
+      "33": 19,
+      "34": 18,
+      "35": 18,
+      "36": 19,
+      "37": 20,
+      "4": 18,
+      "5": 18,
+      "6": 18,
+      "7": 18,
+      "8": 18,
+      "9": 18
+    }
+  }
+}

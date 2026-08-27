@@ -1,0 +1,25 @@
+# E13-faithful --- WITHIN-RSBdSL38 SIGNER-INDEPENDENT eval on the authors' V2
+# signer-disjoint partition (rsbdsl38-o-signer, Mendeley 10.17632/tgvmb2jsdb.2,
+# released 2026-08 on request). train/ and sibling test/ are SIGNER-DISJOINT by
+# construction, so this is the faithful within-RSBdSL38 SI number (replaces the
+# leaky provided-split caveat). Our standard DINOv2-S+LoRA recipe.
+Experiment_name: bhc_rsbdsl38_osigner
+sources:
+  rsbdsl38_osigner: "data/RSBdSL38_osigner/train"   # sibling test/ = signer-disjoint held-out
+split: {}
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj, mlp.fc1, mlp.fc2]
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 50
+base_lr: 0.0005
+weight_decay: 0.01
+grad_clip: 1.0
+save_interval: 1
+work_dir: ./work_dir/bhc_rsbdsl38_osigner

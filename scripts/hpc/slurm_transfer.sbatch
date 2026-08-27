@@ -15,17 +15,22 @@
 #SBATCH -c 8
 #SBATCH -n 1
 #SBATCH --gpus 1
-#SBATCH -p <PARTITION>              # <-- fill from `sinfo -s`
+#SBATCH -p gpu_7day                 # matches the array; 48h walltime fits
+#SBATCH --exclude=dscog035,dscog036   # dscog035 idle-but-fails; dscog036 down
 #SBATCH -t 48:00:00
 #SBATCH -o slurm_logs/%x_%j.out
 #SBATCH -e slurm_logs/%x_%j.err
 
-set -euo pipefail
+set -eo pipefail    # NB: no -u — conda's MKL activate.d script uses unbound vars
 cd "$SLURM_SUBMIT_DIR"
 mkdir -p slurm_logs results
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate bdsl_graph
 export PYTHONIOENCODING=utf-8
+export HF_HOME="$HOME/hf_cache"                # reuse the warmed weight cache (BH is on home, not scratch)
+export TORCH_HOME="$HOME/torch_cache"
+export HF_HUB_OFFLINE=1                        # compute nodes have NO outbound HTTPS
+export TRANSFORMERS_OFFLINE=1
 
 python - <<'PYEOF'
 import sys

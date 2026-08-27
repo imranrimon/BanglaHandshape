@@ -1,0 +1,33 @@
+# E13 --- EXTERNAL signer-diverse dataset (RSBdSL38: 10,874 imgs, 38 classes, 36
+# participants; Sohan et al. 2026, Mendeley 10.17632/tgvmb2jsdb.1).
+# This runs OUR DINOv2-S+LoRA pipeline on RSBdSL38's author-provided train/test
+# split (auto-detected via _provided_test_dir). NOTE: the public release ships NO
+# signer IDs, so this provided split is signer-DEPENDENT (random). It is an
+# external-generalization baseline row for the T1 table, NOT the within-RSBdSL38
+# SI gap --- that needs the authors' private signer-disjoint partition
+# (rsbdsl38-o-signer-m, 403/withheld: minors). Cross-dataset transfer (which IS
+# signer-independent, RSBdSL38 signers unseen) is handled separately.
+Experiment_name: bhc_rsbdsl38_ext
+
+sources:
+  rsbdsl38: "data/RSBdSL38/train"     # sibling data/RSBdSL38/test used as held-out
+
+split: {}                              # no user IDs -> provided-test path
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj, mlp.fc1, mlp.fc2]
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 50
+base_lr: 0.0005
+weight_decay: 0.01
+grad_clip: 1.0
+save_interval: 1
+work_dir: ./work_dir/bhc_rsbdsl38_ext

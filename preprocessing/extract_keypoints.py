@@ -103,7 +103,10 @@ def extract_source(name, root, landmarker, log_every=2000):
     rate = 100.0 * detected.sum() / max(1, n)
     print(f"[{name}] DONE n={n} detected={int(detected.sum())} ({rate:.1f}%) "
           f"in {time.time()-t0:.0f}s", flush=True)
-    return np.array(imgs, dtype=object), kp, detected
+    # Unicode (not object) dtype: an object array pickles numpy-version-internal
+    # module refs (numpy._core in 2.x), which the numpy-1.x training env can't
+    # unpickle. A <U string array is pickle-free and portable across envs.
+    return np.asarray(imgs, dtype="U"), kp, detected
 
 
 def main():

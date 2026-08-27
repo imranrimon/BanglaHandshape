@@ -1,0 +1,31 @@
+# Tier-2 method (pose⊕RGB fusion) — SIGNER-DEPENDENT half of BdSL47.
+# force_random overrides BdSL47's user-disjoint split with a random 80/10/10
+# (same signer in train AND val = the shortcut), identical to bdsl47_sd.yaml.
+# Pairs with fusion_bdsl47_si.yaml: gap_modality = Top1(SD) - Top1(SI).
+Experiment_name: bhc_fusion_sd
+
+sources:
+  bdsl47_digits:   "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:  "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+
+split:
+  force_random: True
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+encoder:
+  timm_name: vit_base_patch14_dinov2.lvd142m   # frozen DINOv2-B (best A1 backbone)
+  image_size: 224
+
+head:
+  hidden: 256
+  depth: 2
+  dropout: 0.2
+
+batch_size: 256
+num_epoch: 50
+base_lr: 0.001
+weight_decay: 0.01
+num_workers: 4
+work_dir: ./work_dir/bhc_fusion_sd

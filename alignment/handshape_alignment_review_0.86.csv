@@ -1,0 +1,146 @@
+canonical_id,source,class_folder,n_images,top_cross_source_match,top_cross_source_cosine,second_cross_source_match,second_cosine,needs_review
+0,bdsl_mnist,0,60,rsbdsl38:0,0.8162,rsbdsl38:15,0.8133,1
+0,bdsl_mnist,1,60,rsbdsl38:30,0.8281,rsbdsl38:21,0.8215,1
+0,bdsl_mnist,10,60,bdsl47_letters:Sign 08,0.8059,bdsl47_letters:Sign 09,0.8019,1
+0,bdsl_mnist,11,60,rsbdsl38:2,0.8005,rsbdsl38:14,0.7961,1
+0,bdsl_mnist,12,60,rsbdsl38:14,0.8207,rsbdsl38:2,0.8146,1
+0,bdsl_mnist,13,60,rsbdsl38:13,0.8254,rsbdsl38:15,0.8247,1
+0,bdsl_mnist,14,60,rsbdsl38:14,0.8376,rsbdsl38:15,0.8371,1
+0,bdsl_mnist,15,60,rsbdsl38:15,0.8129,rsbdsl38:14,0.7978,1
+0,bdsl_mnist,16,60,bdsl47_letters:Sign 21,0.8149,bdsl47_letters:Sign 13,0.8017,1
+0,bdsl_mnist,17,60,rsbdsl38:24,0.8648,rsbdsl38:21,0.8601,1
+0,bdsl_mnist,18,60,rsbdsl38:14,0.8278,rsbdsl38:15,0.8264,1
+0,bdsl_mnist,19,60,rsbdsl38:33,0.7818,rsbdsl38:23,0.7736,1
+0,bdsl_mnist,2,60,rsbdsl38:14,0.7907,rsbdsl38:2,0.7874,1
+0,bdsl_mnist,20,60,rsbdsl38:2,0.8370,rsbdsl38:14,0.8250,1
+0,bdsl_mnist,21,60,rsbdsl38:13,0.8534,rsbdsl38:15,0.8513,1
+0,bdsl_mnist,22,60,rsbdsl38:14,0.8096,rsbdsl38:2,0.8037,1
+0,bdsl_mnist,23,60,rsbdsl38:33,0.7686,rsbdsl38:23,0.7646,1
+0,bdsl_mnist,24,60,rsbdsl38:24,0.8664,rsbdsl38:32,0.8517,1
+0,bdsl_mnist,25,60,rsbdsl38:24,0.8401,rsbdsl38:26,0.8320,1
+0,bdsl_mnist,26,60,rsbdsl38:26,0.8325,rsbdsl38:33,0.8316,1
+0,bdsl_mnist,27,60,rsbdsl38:14,0.8640,rsbdsl38:15,0.8536,1
+0,bdsl_mnist,3,60,rsbdsl38:14,0.8032,rsbdsl38:2,0.7999,1
+0,bdsl_mnist,30,60,rsbdsl38:30,0.7858,rsbdsl38:16,0.7593,1
+0,bdsl_mnist,31,60,rsbdsl38:30,0.8320,rsbdsl38:15,0.8265,1
+0,bdsl_mnist,32,60,rsbdsl38:32,0.8476,rsbdsl38:24,0.8364,1
+0,bdsl_mnist,33,60,rsbdsl38:33,0.7747,rsbdsl38:23,0.7571,1
+0,bdsl_mnist,34,60,rsbdsl38:4,0.8493,rsbdsl38:15,0.8407,1
+0,bdsl_mnist,35,60,rsbdsl38:15,0.8299,rsbdsl38:32,0.8280,1
+0,bdsl_mnist,36,60,rsbdsl38:14,0.8123,rsbdsl38:36,0.8094,1
+0,bdsl_mnist,4,60,rsbdsl38:15,0.7542,rsbdsl38:4,0.7502,1
+0,bdsl_mnist,5,60,rsbdsl38:2,0.8293,rsbdsl38:14,0.8115,1
+0,bdsl_mnist,6,60,rsbdsl38:14,0.8388,rsbdsl38:2,0.8379,1
+0,bdsl_mnist,7,60,rsbdsl38:2,0.8415,rsbdsl38:7,0.8191,1
+0,bdsl_mnist,8,60,rsbdsl38:14,0.7801,rsbdsl38:15,0.7718,1
+0,bdsl_mnist,9,60,rsbdsl38:2,0.8263,rsbdsl38:14,0.8250,1
+1,bdsl_mnist,28,60,rsbdsl38:28,0.7495,rsbdsl38:0,0.7395,1
+1,bdsl_mnist,29,60,rsbdsl38:28,0.7571,rsbdsl38:29,0.7410,1
+2,bdsl47_digits,Sign 0,60,bdsl47_letters:Sign 18,0.9570,bdsl47_letters:Sign 06,0.9494,0
+2,bdsl47_digits,Sign 1,60,bdsl47_letters:Sign 04,0.9348,bdsl47_letters:Sign 20,0.9333,0
+2,bdsl47_digits,Sign 2,60,bdsl47_letters:Sign 21,0.9530,bdsl47_letters:Sign 28,0.9490,0
+2,bdsl47_digits,Sign 3,60,bdsl47_letters:Sign 30,0.9498,bdsl47_letters:Sign 21,0.9328,0
+2,bdsl47_digits,Sign 4,60,bdsl47_letters:Sign 30,0.9308,bdsl47_letters:Sign 21,0.9281,0
+2,bdsl47_digits,Sign 5,60,bdsl47_letters:Sign 21,0.9301,bdsl47_letters:Sign 01,0.9120,0
+2,bdsl47_digits,Sign 6,60,bdsl47_letters:Sign 26,0.9613,bdsl47_letters:Sign 27,0.9536,0
+2,bdsl47_digits,Sign 7,60,bdsl47_letters:Sign 21,0.9252,bdsl47_letters:Sign 10,0.9220,0
+2,bdsl47_digits,Sign 8,60,bdsl47_letters:Sign 21,0.9662,bdsl47_letters:Sign 32,0.9379,0
+2,bdsl47_digits,Sign 9,60,bdsl47_letters:Sign 27,0.9264,bdsl47_letters:Sign 26,0.9219,0
+2,bdsl47_letters,Sign 00,60,bdsl47_digits:Sign 0,0.9340,bdsl47_digits:Sign 1,0.9076,0
+2,bdsl47_letters,Sign 01,60,bdsl47_digits:Sign 0,0.9310,bdsl47_digits:Sign 3,0.9239,0
+2,bdsl47_letters,Sign 02,60,bdsl47_digits:Sign 1,0.8842,bdsl47_digits:Sign 6,0.8806,1
+2,bdsl47_letters,Sign 03,60,bdsl47_digits:Sign 1,0.9298,bdsl47_digits:Sign 2,0.8996,0
+2,bdsl47_letters,Sign 04,60,bdsl47_digits:Sign 1,0.9348,bdsl47_digits:Sign 6,0.9169,0
+2,bdsl47_letters,Sign 05,60,bdsl47_digits:Sign 1,0.8921,bdsl47_digits:Sign 0,0.8886,1
+2,bdsl47_letters,Sign 06,60,bdsl47_digits:Sign 0,0.9494,bdsl47_digits:Sign 6,0.9329,0
+2,bdsl47_letters,Sign 07,60,bdsl47_digits:Sign 1,0.8830,bdsl47_digits:Sign 0,0.8813,1
+2,bdsl47_letters,Sign 08,60,bdsl47_digits:Sign 0,0.9249,bdsl47_digits:Sign 1,0.9177,0
+2,bdsl47_letters,Sign 09,60,bdsl47_digits:Sign 0,0.9054,bdsl47_digits:Sign 6,0.8951,1
+2,bdsl47_letters,Sign 10,60,bdsl47_digits:Sign 6,0.9446,bdsl47_digits:Sign 2,0.9318,0
+2,bdsl47_letters,Sign 11,60,bdsl47_digits:Sign 0,0.8960,bdsl47_digits:Sign 1,0.8912,1
+2,bdsl47_letters,Sign 12,60,bdsl47_digits:Sign 1,0.9030,bdsl47_digits:Sign 6,0.8885,1
+2,bdsl47_letters,Sign 13,60,bdsl47_digits:Sign 0,0.9406,bdsl47_digits:Sign 2,0.9244,0
+2,bdsl47_letters,Sign 14,60,bdsl47_digits:Sign 0,0.9483,bdsl47_digits:Sign 2,0.9257,0
+2,bdsl47_letters,Sign 15,60,bdsl47_digits:Sign 2,0.9194,bdsl47_digits:Sign 1,0.9180,0
+2,bdsl47_letters,Sign 16,60,bdsl47_digits:Sign 2,0.9296,bdsl47_digits:Sign 1,0.9279,0
+2,bdsl47_letters,Sign 17,60,bdsl47_digits:Sign 0,0.9252,bdsl47_digits:Sign 6,0.9245,0
+2,bdsl47_letters,Sign 18,60,bdsl47_digits:Sign 0,0.9570,bdsl47_digits:Sign 2,0.9386,0
+2,bdsl47_letters,Sign 19,60,bdsl47_digits:Sign 6,0.9224,bdsl47_digits:Sign 1,0.9202,0
+2,bdsl47_letters,Sign 20,60,bdsl47_digits:Sign 1,0.9333,bdsl47_digits:Sign 6,0.9130,0
+2,bdsl47_letters,Sign 21,60,bdsl47_digits:Sign 8,0.9662,bdsl47_digits:Sign 2,0.9530,0
+2,bdsl47_letters,Sign 22,60,bdsl47_digits:Sign 1,0.8976,bdsl47_digits:Sign 2,0.8707,1
+2,bdsl47_letters,Sign 23,60,bdsl47_digits:Sign 2,0.9115,bdsl47_digits:Sign 1,0.9091,0
+2,bdsl47_letters,Sign 24,60,bdsl47_digits:Sign 1,0.9114,bdsl47_digits:Sign 6,0.9004,0
+2,bdsl47_letters,Sign 25,60,bdsl47_digits:Sign 6,0.9472,bdsl47_digits:Sign 2,0.9217,0
+2,bdsl47_letters,Sign 26,60,bdsl47_digits:Sign 6,0.9613,bdsl47_digits:Sign 9,0.9219,0
+2,bdsl47_letters,Sign 27,60,bdsl47_digits:Sign 6,0.9536,bdsl47_digits:Sign 9,0.9264,0
+2,bdsl47_letters,Sign 28,60,bdsl47_digits:Sign 2,0.9490,bdsl47_digits:Sign 6,0.9227,0
+2,bdsl47_letters,Sign 29,60,bdsl47_digits:Sign 0,0.9429,bdsl47_digits:Sign 2,0.9316,0
+2,bdsl47_letters,Sign 30,60,bdsl47_digits:Sign 3,0.9498,bdsl47_digits:Sign 0,0.9489,0
+2,bdsl47_letters,Sign 31,60,bdsl47_digits:Sign 0,0.9319,bdsl47_digits:Sign 3,0.9251,0
+2,bdsl47_letters,Sign 32,60,bdsl47_digits:Sign 8,0.9379,bdsl47_digits:Sign 2,0.9291,0
+2,bdsl47_letters,Sign 33,60,bdsl47_digits:Sign 1,0.9128,bdsl47_digits:Sign 6,0.8952,0
+2,bdsl47_letters,Sign 34,60,bdsl47_digits:Sign 6,0.9248,bdsl47_digits:Sign 0,0.8930,0
+2,bdsl47_letters,Sign 35,60,bdsl47_digits:Sign 1,0.9129,bdsl47_digits:Sign 6,0.9059,0
+2,bdsl47_letters,Sign 36,60,bdsl47_digits:Sign 6,0.9273,bdsl47_digits:Sign 1,0.9271,0
+3,bdsl49_recognition,0,60,bdsl47_digits:Sign 8,0.8494,bdsl47_letters:Sign 21,0.8490,1
+3,bdsl49_recognition,1,60,bdsl47_letters:Sign 32,0.8050,bdsl47_letters:Sign 21,0.8038,1
+3,bdsl49_recognition,19,60,bdsl47_letters:Sign 23,0.8268,bdsl47_letters:Sign 15,0.8250,1
+3,bdsl49_recognition,2,60,bdsl47_digits:Sign 8,0.8379,bdsl47_letters:Sign 21,0.8378,1
+3,bdsl49_recognition,3,60,bdsl47_digits:Sign 8,0.8497,bdsl47_letters:Sign 21,0.8487,1
+3,bdsl49_recognition,4,60,bdsl47_letters:Sign 21,0.8466,bdsl47_digits:Sign 8,0.8443,1
+3,bdsl49_recognition,5,60,bdsl47_digits:Sign 8,0.8578,bdsl47_letters:Sign 21,0.8524,1
+4,bdsl49_recognition,10,60,bdsl47_letters:Sign 15,0.7487,bdsl47_letters:Sign 22,0.7383,1
+4,bdsl49_recognition,7,60,bdsl47_letters:Sign 12,0.7195,bdsl47_letters:Sign 05,0.7150,1
+5,bdsl49_recognition,11,60,bdsl47_letters:Sign 15,0.7889,bdsl47_letters:Sign 32,0.7787,1
+5,bdsl49_recognition,14,60,rsbdsl38:32,0.8076,bdsl47_letters:Sign 15,0.7793,1
+5,bdsl49_recognition,16,60,bdsl47_letters:Sign 15,0.7495,bdsl47_letters:Sign 23,0.7475,1
+5,bdsl49_recognition,17,60,rsbdsl38:32,0.7462,bdsl47_letters:Sign 15,0.7129,1
+5,bdsl49_recognition,18,60,rsbdsl38:32,0.7669,bdsl47_letters:Sign 22,0.7490,1
+5,bdsl49_recognition,22,60,bdsl47_letters:Sign 22,0.7502,bdsl47_letters:Sign 15,0.7468,1
+5,bdsl49_recognition,6,60,bdsl47_letters:Sign 32,0.7599,rsbdsl38:32,0.7523,1
+5,bdsl49_recognition,8,60,bdsl47_letters:Sign 22,0.7430,bdsl47_letters:Sign 23,0.7331,1
+5,bdsl49_recognition,9,60,bdsl47_letters:Sign 15,0.7228,bdsl47_letters:Sign 22,0.7181,1
+6,bdsl49_recognition,12,60,bdsl47_letters:Sign 15,0.7399,bdsl47_letters:Sign 03,0.7395,1
+6,bdsl49_recognition,20,60,bdsl47_letters:Sign 02,0.6719,bdsl47_letters:Sign 20,0.6552,1
+6,bdsl49_recognition,21,60,bdsl47_letters:Sign 22,0.7069,bdsl47_letters:Sign 03,0.7056,1
+7,bdsl49_recognition,13,60,bdsl47_letters:Sign 23,0.7771,bdsl47_digits:Sign 1,0.7766,1
+8,bdsl49_recognition,15,60,rsbdsl38:32,0.6312,rsbdsl38:8,0.6222,1
+9,rsbdsl38,0,60,bdsl_mnist:27,0.8465,bdsl_mnist:34,0.8405,1
+9,rsbdsl38,1,60,bdsl_mnist:21,0.8399,bdsl_mnist:17,0.8262,1
+9,rsbdsl38,10,60,bdsl_mnist:34,0.8294,bdsl47_letters:Sign 22,0.8261,1
+9,rsbdsl38,11,60,bdsl_mnist:34,0.8312,bdsl47_letters:Sign 22,0.8151,1
+9,rsbdsl38,12,60,bdsl47_letters:Sign 22,0.8487,bdsl47_letters:Sign 02,0.8362,1
+9,rsbdsl38,13,60,bdsl_mnist:21,0.8534,bdsl_mnist:27,0.8530,1
+9,rsbdsl38,14,60,bdsl_mnist:27,0.8640,bdsl_mnist:6,0.8388,1
+9,rsbdsl38,15,60,bdsl_mnist:27,0.8536,bdsl_mnist:21,0.8513,1
+9,rsbdsl38,16,60,bdsl_mnist:21,0.8467,bdsl_mnist:17,0.8401,1
+9,rsbdsl38,17,60,bdsl_mnist:17,0.8430,bdsl_mnist:24,0.8265,1
+9,rsbdsl38,18,60,bdsl_mnist:27,0.8508,bdsl_mnist:21,0.8456,1
+9,rsbdsl38,19,60,bdsl_mnist:34,0.8211,bdsl47_letters:Sign 02,0.8151,1
+9,rsbdsl38,2,60,bdsl_mnist:7,0.8415,bdsl_mnist:6,0.8379,1
+9,rsbdsl38,20,60,bdsl_mnist:34,0.8096,bdsl_mnist:7,0.8050,1
+9,rsbdsl38,21,60,bdsl_mnist:17,0.8601,bdsl_mnist:24,0.8516,1
+9,rsbdsl38,22,60,bdsl_mnist:17,0.8308,bdsl_mnist:27,0.8284,1
+9,rsbdsl38,23,60,bdsl_mnist:26,0.8156,bdsl_mnist:34,0.8098,1
+9,rsbdsl38,24,60,bdsl_mnist:24,0.8664,bdsl_mnist:17,0.8648,1
+9,rsbdsl38,25,60,bdsl_mnist:34,0.8231,bdsl_mnist:25,0.8227,1
+9,rsbdsl38,26,60,bdsl_mnist:34,0.8392,bdsl_mnist:26,0.8325,1
+9,rsbdsl38,27,60,bdsl_mnist:27,0.8325,bdsl_mnist:17,0.8278,1
+9,rsbdsl38,28,60,bdsl_mnist:34,0.8121,bdsl_mnist:17,0.7896,1
+9,rsbdsl38,29,60,bdsl47_letters:Sign 34,0.8215,bdsl_mnist:34,0.8174,1
+9,rsbdsl38,3,60,bdsl_mnist:34,0.8235,bdsl_mnist:17,0.8016,1
+9,rsbdsl38,30,60,bdsl_mnist:17,0.8320,bdsl_mnist:31,0.8320,1
+9,rsbdsl38,31,60,bdsl_mnist:17,0.8372,bdsl_mnist:34,0.8361,1
+9,rsbdsl38,32,60,bdsl_mnist:24,0.8517,bdsl_mnist:21,0.8509,1
+9,rsbdsl38,33,60,bdsl_mnist:26,0.8316,bdsl47_letters:Sign 22,0.8289,1
+9,rsbdsl38,34,60,bdsl_mnist:34,0.8272,bdsl_mnist:17,0.8026,1
+9,rsbdsl38,35,60,bdsl_mnist:34,0.8202,bdsl_mnist:24,0.8185,1
+9,rsbdsl38,36,60,bdsl47_letters:Sign 22,0.8204,bdsl_mnist:36,0.8094,1
+9,rsbdsl38,4,60,bdsl_mnist:34,0.8493,bdsl_mnist:17,0.8257,1
+9,rsbdsl38,5,60,bdsl_mnist:34,0.8174,bdsl_mnist:7,0.8130,1
+9,rsbdsl38,6,60,bdsl_mnist:34,0.8345,bdsl47_letters:Sign 03,0.8228,1
+9,rsbdsl38,7,60,bdsl_mnist:7,0.8191,bdsl_mnist:5,0.8062,1
+9,rsbdsl38,8,60,bdsl_mnist:27,0.8294,bdsl_mnist:34,0.8279,1
+9,rsbdsl38,9,60,bdsl_mnist:34,0.8238,bdsl_mnist:27,0.8124,1
+10,rsbdsl38,37,60,bdsl_mnist:7,0.7766,bdsl_mnist:20,0.7618,1

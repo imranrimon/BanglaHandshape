@@ -1,0 +1,34 @@
+# A1/A3 backbone refresh — AIMv2-L/14 linear probe (Apple autoregressive
+# multimodal SSL, natively 224px). A modern non-DINO SSL family for the baseline
+# table (contrast with DINOv2 / MAE / SigLIP). Frozen probe (feature-cache path).
+Experiment_name: bhc_probe_aimv2_l
+
+sources:
+  bdsl_mnist:          data/BdSL-MNIST
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+  bsld_45:             data/BSLD_45/Train
+  bdsl49_recognition:  data/bdsl49_extracted/Recognition_1/Recognition_1/train
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+encoder:
+  timm_name: aimv2_large_patch14_224.apple_pt
+  pretrained: True
+  lora_rank: 0
+  lora_targets: []
+
+image_size: 224
+batch_size: 32          # large backbone; frozen so activations dominate VRAM
+num_workers: 4
+num_epoch: 5
+base_lr: 0.001
+weight_decay: 0.0001
+grad_clip: 1.0
+save_interval: 1
+work_dir: ./work_dir/bhc_probe_aimv2_l

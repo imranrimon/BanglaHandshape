@@ -161,6 +161,7 @@ class HandshapeDataset(Dataset):
         img_cache_index=None,
         img_cache_dir=None,
         cached_transform=None,
+        crop_index=None,
     ):
         self.sources = [s for s, _e in sources_with_entries]
         self.image_size = image_size
@@ -172,6 +173,11 @@ class HandshapeDataset(Dataset):
         self.img_cache_index = img_cache_index
         self.img_cache_dir = img_cache_dir
         self.cached_transform = cached_transform
+        # Optional hand-crop ablation: {abs_path -> (x0,y0,x1,y1)} pixel box
+        # (preprocessing/extract_hand_bbox.py). When set, each image is cropped to
+        # its hand box before the transform, and the pre-resize cache (which holds
+        # UNCROPPED frames) is bypassed so the crop actually takes effect.
+        self.crop_index = crop_index
         self._mmaps = {}
         # Flatten: (path, source_idx, label_within_source)
         self.items = []
@@ -200,10 +206,16 @@ class HandshapeDataset(Dataset):
 
     def __getitem__(self, idx):
         path, src_idx, label = self.items[idx]
-        cached = self._cached(path)
-        if cached is not None:
-            return cached, src_idx, label
+        # Pre-resize cache holds UNCROPPED 224s; skip it when hand-cropping.
+        if self.crop_index is None:
+            cached = self._cached(path)
+            if cached is not None:
+                return cached, src_idx, label
         img = Image.open(path).convert("RGB")
+        if self.crop_index is not None:
+            box = self.crop_index.get(_cache_key(path))
+            if box is not None:
+                img = img.crop(tuple(box))
         if self.transform is not None:
             img = self.transform(img)
         else:

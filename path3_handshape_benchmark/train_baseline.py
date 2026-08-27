@@ -95,6 +95,27 @@ def _provided_test_dir(root):
     return None
 
 
+def _load_crop_index(cache_dir, source_names):
+    """Hand-crop ablation (A-mechanism): load MediaPipe hand bboxes
+    (preprocessing/extract_hand_bbox.py) into {abs_path -> (x0,y0,x1,y1)}. Only
+    detected boxes are included; undetected images fall through to the full frame
+    (no crop). Returns None if nothing loaded (a safe no-op)."""
+    import numpy as np
+    idx = {}
+    for name in source_names:
+        f = os.path.join(cache_dir, f"{name}.npz")
+        if not os.path.exists(f):
+            print(f"[hand-crop] WARN: no bbox cache for {name} at {f}")
+            continue
+        d = np.load(f, allow_pickle=True)
+        for p, b, det in zip(d["paths"], d["bbox"], d["detected"]):
+            if int(det) == 1:
+                idx[os.path.normpath(os.path.abspath(str(p)))] = \
+                    tuple(int(v) for v in b)
+    print(f"[hand-crop] loaded {len(idx)} hand boxes from {cache_dir}")
+    return idx or None
+
+
 def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
     _init_seed(seed)
     base_exp = cfg.get("Experiment_name", "bhc_run")
@@ -154,8 +175,12 @@ def _train_one_seed(cfg, seed, results_csv="results_final.csv"):
                    if os.path.normpath(os.path.abspath(p)) in img_cache_index)
         print(f"[img-cache] {len(img_cache_index)} cached entries; "
               f"train hits {hits}/{sum(len(e) for _s, e in train_pairs)}")
+    crop_index = None
+    if cfg.get("hand_crop_cache"):
+        crop_index = _load_crop_index(cfg["hand_crop_cache"],
+                                      [s.name for s in sources])
     _ck = dict(img_cache_index=img_cache_index, img_cache_dir=img_cache_dir,
-               cached_transform=cached_tf)
+               cached_transform=cached_tf, crop_index=crop_index)
     ds_train = HandshapeDataset(train_pairs, transform=transform, **_ck)
     ds_val = HandshapeDataset(val_pairs, transform=transform, **_ck)
 

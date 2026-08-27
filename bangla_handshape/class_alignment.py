@@ -44,6 +44,7 @@ DEFAULT_SOURCES = {
     "bdsl47_letters":      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters",
     "bsld_45":             "data/BSLD_45/Train",
     "bdsl49_recognition":  "data/bdsl49_extracted/Recognition_1/Recognition_1/train",
+    "rsbdsl38":            "data/RSBdSL38/train",   # E13 external source (has sibling test/)
 }
 
 

@@ -48,6 +48,23 @@ Total ≈ 195 k images across the four. Compute for the whole paper is ~1–2 GP
    (`User*/` dirs or `.csv`), so a wrong source fails loudly instead of silently
    corrupting the benchmark. Until resolved, `discover_default` simply omits
    `bsld_45` (the other four sources run fine).
+4. **BdSL47 (Dryad mirror) has CASE-INCONSISTENT image subfolders across users —
+   flatten CASE-INSENSITIVELY or you silently drop signers.** The 2.83 GB Dryad
+   `.rar` (`doi:10.5061/dryad.1vhhmgqwk`, the only source with the actual 47k
+   images — the Mendeley/Kaggle `pbb3w3f92y` release is CSV/keypoints only) nests
+   raw frames as `<User>/<Sign NN>/Input Images/…`, **but some users use lowercase**
+   (`sign nn/input images/…`, e.g. Sign-Letters users 01–03). A case-sensitive
+   flatten (e.g. `bsdtar -s '|/Input Images[^/]*/|/|'`, or the equivalent in a
+   custom extractor) leaves those users' images one level too deep, so
+   `enumerate_source` reports **0 samples** for them and every Letters experiment
+   silently trains on a subset of signers (verified 2026-08: 7/10 users; the
+   LOUO-appearance letters column went NaN, which is how it was caught). Fix: match
+   `[Ii]nput [Ii]mages` (and discard `[Oo]utput [Ii]mages` overlays), and normalise
+   `Sign NN`/`sign nn`/`signNN` folder names to a single zero-padded `Sign NN`
+   (also case-varying across users). Always verify per-user counts after extraction:
+   `enumerate_source` should give ~3700 letters / ~1000 digits images for each of
+   the 10 users. The Dryad download sits behind an Anubis proof-of-work WAF — a
+   plain `curl` returns the JS challenge page, not the file.
 
 ## Where to put it
 

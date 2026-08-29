@@ -9,6 +9,12 @@ If the Bangla-adapted encoder gives *higher* downstream Top-1 on BdSLW60-SI
 *and* a *smaller* signer-dependent → signer-independent gap, that is the
 sharpest methodological finding the entire project produces.
 
+> **Status.** Step P1.1 (LoRA-tune the encoder, `train.py`) is included here and
+> smoke-tested. Steps P1.2–P1.4 feed the resulting encoder into the parent
+> word-level SLR pipeline (BdSLW60), which lives in a separate repository — so
+> `extract_features.py` and the downstream configs below are **planned and not
+> yet shipped in this image-only repo**.
+
 ## Layout
 
 ```
@@ -17,8 +23,9 @@ path1_bangla_dinov2/
 ├── configs/
 │   └── train_lora.yaml  LoRA tuning hyperparameters
 ├── train.py             entry point: LoRA fine-tune DINOv2 on aggregated corpus
-└── extract_features.py  apply the LoRA-tuned encoder to BdSLW60 hand crops
-                         (produces NPYs in the same shape as Option B's DINOv2)
+└── extract_features.py  (planned) apply the LoRA-tuned encoder to BdSLW60 hand
+                         crops, producing NPYs in the shape Option B's DINOv2
+                         expects — depends on the parent repo; not yet included
 ```
 
 The shared library `bangla_handshape/` (in the repo root) provides:
@@ -57,15 +64,15 @@ Wall-clock estimate on Quadro RTX 8000: **~3-6 h** for ~10 epochs over
 
 Output: `work_dir/bdino_lora/encoder_epoch<N>.pt` (backbone state dict only).
 
-### Step P1.2 — apply encoder to BdSLW60 hand crops
+### Step P1.2 — apply encoder to BdSLW60 hand crops *(planned)*
 
 ```bash
-python -m path1_bangla_dinov2.extract_features ^
-    --dataset-root "Word_level_Bangla_Sign_Language_Dataset/BdSLW30" ^
-    --output-dir data/bdsl_si_bdino ^
-    --cache-dir data/bdsl_bdino_cache ^
-    --encoder-checkpoint work_dir/bdino_lora/encoder_epoch10.pt ^
-    --splits train val test ^
+python -m path1_bangla_dinov2.extract_features \
+    --dataset-root "Word_level_Bangla_Sign_Language_Dataset/BdSLW30" \
+    --output-dir data/bdsl_si_bdino \
+    --cache-dir data/bdsl_bdino_cache \
+    --encoder-checkpoint work_dir/bdino_lora/encoder_epoch10.pt \
+    --splits train val test \
     --device cuda --batch-size 64
 ```
 

@@ -11,6 +11,7 @@ import os, re, glob, argparse
 import numpy as np, torch
 import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
+from tools.figstyle import apply, despine, ygrid, barlabels, PAL, COL
 
 from bangla_handshape.class_alignment import discover_source
 from bangla_handshape.handshape_dataset import (
@@ -70,16 +71,21 @@ def main():
             print(f"  {src} {cls[c]}: SD={sd[c]*100:.1f} SI={si[c]*100:.1f} gap={g:.1f}")
     rows.sort(key=lambda r: r[1], reverse=True)
     top = rows[:a.topn]
-    plt.rcParams.update({"font.size": 12})
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.bar(range(len(top)), [g for _, g in top], color="#c1443c", edgecolor="black", linewidth=0.5)
-    ax.set_xticks(range(len(top))); ax.set_xticklabels([n for n, _ in top], rotation=55, ha="right", fontsize=11)
-    ax.set_ylabel("Top-1 gap  (SD $-$ SI)  [pp]", fontsize=13)
-    ax.grid(axis="y", alpha=0.3)
+    apply()
+    fig, ax = plt.subplots(figsize=(COL, 2.5))
+    vals = [g for _, g in top]
+    bars = ax.bar(range(len(top)), vals, color=PAL["gap"], edgecolor="black", linewidth=0.4, width=0.72)
+    ax.set_xticks(range(len(top)))
+    ax.set_xticklabels([n for n, _ in top], rotation=45, ha="right", fontsize=6)
+    ax.set_ylabel("Top-1 gap, SD $-$ SI (pp)")
+    ax.set_xlim(-0.7, len(top) - 0.3)
+    ax.axhline(0, color="black", lw=0.6)
+    despine(ax); ygrid(ax)
+    barlabels(ax, bars, fmt="{:.0f}", dy=0.8, fontsize=5.5)
     fig.tight_layout()
     for ext in ("pdf", "png"):
-        fig.savefig(f"{a.output}.{ext}", dpi=600, bbox_inches="tight")
-    print(f"wrote {a.output}.{{pdf,png}} @600dpi")
+        fig.savefig(f"{a.output}.{ext}", bbox_inches="tight")
+    print(f"wrote {a.output}.{{pdf,png}}")
 
 if __name__ == "__main__":
     main()

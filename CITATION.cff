@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this benchmark or code, please cite the repository (a paper citation will be added on publication)."
+title: "BanglaHandshape: A Signer-Independent Benchmark for Still-Image Bangla Sign Language Handshape Classification"
+abstract: >-
+  A signer-independent (SI) benchmark for still-image Bangla Sign Language
+  handshape classification. It aggregates public Bangla handshape image datasets
+  under an SI protocol, provides a foundation-model-era (DINOv2 / LoRA) baseline
+  table across them, and quantifies the signer-dependent to signer-independent
+  accuracy drop (the identity shortcut) using per-user leave-one-signer-out
+  evaluation and near-duplicate leakage audits.
+type: software
+authors:
+  - family-names: Rimon
+    given-names: Imran
+repository-code: "https://github.com/imranrimon/BanglaHandshape"
+license: MIT
+version: "1.0.0"
+date-released: "2026-08-29"
+keywords:
+  - sign language recognition
+  - Bangla Sign Language
+  - signer-independent evaluation
+  - handshape classification
+  - DINOv2
+  - LoRA
+  - benchmark
+  - reproducibility

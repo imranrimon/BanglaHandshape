@@ -38,6 +38,8 @@ Thumbs.db
 
 # paper build artifacts
 BanglaHandshape_paper_overleaf.zip
+paper/*.zip
+*_overleaf.zip
 paper/*.aux
 paper/*.log
 paper/*.pdf

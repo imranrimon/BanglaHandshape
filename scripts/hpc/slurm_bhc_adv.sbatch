@@ -34,7 +34,7 @@ python -c "import torch; torch.zeros(1).cuda()" 2>/dev/null || {
 
 SEED=$SLURM_ARRAY_TASK_ID
 echo "=== signer-adversarial seed $SEED ==="
-python -u -m path3_handshape_benchmark.train_adversarial \
-  --config path3_handshape_benchmark/configs/bdsl47_si_adv.yaml \
+python -u -m benchmark.baselines.train_adversarial \
+  --config benchmark/configs/bdsl47_si_adv.yaml \
   --seeds "$SEED" --results-csv "results/bhc_adv_seed${SEED}.csv"
 echo "=== done adv seed $SEED ==="

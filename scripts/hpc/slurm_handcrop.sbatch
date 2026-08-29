@@ -25,7 +25,7 @@ export PYTHONIOENCODING=utf-8
 echo "############## [1/2] EXTRACT HAND BBOXES (mp_kp env) ##############"
 conda activate mp_kp
 test -s .kp_models/hand_landmarker.task || { echo "[abort] .kp_models/hand_landmarker.task missing — run scripts/_a6_prep.sh on the login node first"; exit 1; }
-python preprocessing/extract_hand_bbox.py --only bdsl47_digits bdsl47_letters
+python data_prep/extract_hand_bbox.py --only bdsl47_digits bdsl47_letters
 conda deactivate
 
 echo "############## [2/2] TRAIN hand-cropped SI + SD (bdsl_graph env) ##############"

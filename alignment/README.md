@@ -3,7 +3,7 @@
 > **STATUS: FUTURE WORK (deferred).** The tooling and a compute-proposed draft
 > alignment are complete and committed, but LODO is *not run* in the paper — it is
 > gated on expert (native-signer / sign-linguist) verification of the canonical
-> mapping. See `docs/SISTER_PAPER_EXPERIMENTAL_DESIGN.md` §9 for the rationale and
+> mapping. See `docs/EXPERIMENTAL_DESIGN.md` §9 for the rationale and
 > the paper Future-Work paragraph. Cross-corpus generalization is reported in the
 > paper via the pairwise transfer matrix (T4); LODO is its deeper successor. Do NOT
 > report LODO numbers off an unverified alignment. Current draft (sim-threshold 0.92)
@@ -12,7 +12,7 @@
 This directory holds the **cross-corpus handshape alignment** that unifies the
 five sources' disjoint local label spaces into ONE canonical handshape
 vocabulary. It is the opt-in unification the benchmark anticipates
-(`bangla_handshape/class_alignment.py`): baselines stay multi-head/disjoint
+(`banglahandshape/class_alignment.py`): baselines stay multi-head/disjoint
 until a *verified* alignment exists here.
 
 ## Why
@@ -28,7 +28,7 @@ generalization (new camera/background/signer pool).
 
 1. **Propose** (compute-assisted, minutes of GPU):
    ```
-   python -m path3_handshape_benchmark.propose_alignment \
+   python -m benchmark.analysis.propose_alignment \
        --out alignment/handshape_alignment.proposed.json \
        --review-csv alignment/handshape_alignment_review.csv
    ```
@@ -44,7 +44,7 @@ generalization (new camera/background/signer pool).
 
 3. **Use**:
    ```
-   python -m path3_handshape_benchmark.run_lodo \
+   python -m benchmark.analysis.run_lodo \
        --alignment-json alignment/handshape_alignment.json --seeds 0 1 2 \
        --results-csv results/bhc_lodo.csv
    # or: sbatch scripts/hpc/slurm_lodo.sbatch
@@ -67,4 +67,4 @@ generalization (new camera/background/signer pool).
   LODO space and counted in the coverage report.
 
 See `handshape_alignment.example.json` for a concrete (illustrative, unverified)
-skeleton, and `bangla_handshape/handshape_taxonomy.py` for the loader/coverage API.
+skeleton, and `banglahandshape/handshape_taxonomy.py` for the loader/coverage API.

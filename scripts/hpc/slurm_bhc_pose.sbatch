@@ -39,7 +39,7 @@ TRAINERS=(train_distill    train_distill       train_distill          train_fusi
 i=$SLURM_ARRAY_TASK_ID
 C=${CONFIGS[$i]}; T=${TRAINERS[$i]}
 echo "=== $T on $C (3 seeds) ==="
-python -u -m "path3_handshape_benchmark.$T" \
-  --config "path3_handshape_benchmark/configs/${C}.yaml" \
+python -u -m "benchmark.$T" \
+  --config "benchmark/configs/${C}.yaml" \
   --seeds 0 1 2 --results-csv "results/bhc_${C}.csv"
 echo "=== done $C ==="

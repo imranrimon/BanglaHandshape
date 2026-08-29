@@ -36,7 +36,7 @@ for seed in 0 1 2; do
   if ! ls work_dir/bhc_bdsl47_si/encoder_seed${seed}_epoch*.pt >/dev/null 2>&1; then
     echo "[skip] no bdsl47_si checkpoint for seed$seed yet"; continue
   fi
-  python -u -m path3_handshape_benchmark.eval_tta \
+  python -u -m benchmark.analysis.eval_tta \
     --si-dir work_dir/bhc_bdsl47_si --seed $seed --epoch 0 \
     --sources bdsl47_digits bdsl47_letters \
     --tta-method im --div-weight 1.0 --tta-steps 3 --tta-lr 1e-3 \

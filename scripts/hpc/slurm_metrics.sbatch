@@ -31,7 +31,7 @@ export TRANSFORMERS_OFFLINE=1
 python -c "import torch;print('cuda',torch.cuda.is_available(),torch.cuda.get_device_name(0))"
 
 echo "===== T_metrics + T_recalibration: BdSL47 SD vs SI ====="
-python -u -m path3_handshape_benchmark.eval_metrics --seed 0
+python -u -m benchmark.analysis.eval_metrics --seed 0
 
 echo "===== METRICS DONE ====="
 ls -la results/T_metrics.md results/T_recalibration.md 2>/dev/null

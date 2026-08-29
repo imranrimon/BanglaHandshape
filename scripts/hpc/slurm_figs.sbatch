@@ -17,10 +17,10 @@ export PYTHONIOENCODING=utf-8 HF_HOME="$HOME/hf_cache" TORCH_HOME="$HOME/torch_c
 python -c "import torch; torch.zeros(1).cuda()" 2>/dev/null || { echo "GPU dead -> requeue"; scontrol requeue "$SLURM_JOB_ID"; exit 1; }
 if [ "$SLURM_ARRAY_TASK_ID" = "0" ]; then
   echo "=== SF2 gradcam ==="
-  python -u -m path3_handshape_benchmark.plot_gradcam --si-dir work_dir/bhc_bdsl47_si --sd-dir work_dir/bhc_bdsl47_sd \
+  python -u -m benchmark.figures.plot_gradcam --si-dir work_dir/bhc_bdsl47_si --sd-dir work_dir/bhc_bdsl47_sd \
     --source bdsl47_letters --seed 0 --epoch 50 --lora-rank 8 --lora-targets attn.qkv attn.proj mlp.fc1 mlp.fc2 \
     --output paper/figs/SF2_gradcam.png
 else
   echo "=== SF3 per-class gap ==="
-  python -u -m path3_handshape_benchmark.plot_perclass_gap --output paper/figs/SF3_perclass
+  python -u -m benchmark.figures.plot_perclass_gap --output paper/figs/SF3_perclass
 fi

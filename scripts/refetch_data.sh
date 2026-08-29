@@ -1,7 +1,7 @@
 #!/bin/bash -l
 # =====================================================================
 # Re-fetch the four still-image Bangla handshape datasets for the sister
-# paper (docs/SISTER_PAPER_DATA_REFETCH.md). Idempotent: each source is
+# paper (docs/DATA_REFETCH.md). Idempotent: each source is
 # skipped if its target folder already exists, so re-running only fills gaps.
 #
 # All four sources use a STAGING model: you drop the downloaded archives into
@@ -180,11 +180,11 @@ fetch_bdsl49
 # ---------------------------------------------------------------------
 say "verifying with discover_default (expect: bdsl_mnist 37, bdsl47_digits 10, bdsl47_letters 37, bsld_45 45, bdsl49_recognition 49)"
 "$PY" - <<'PYEOF'
-from bangla_handshape.class_alignment import discover_default
+from banglahandshape.class_alignment import discover_default
 srcs = discover_default(repo_root=".")
 if not srcs:
     print("  [!] no sources discovered — check DATA_DIR paths against DEFAULT_SOURCES")
 for s in srcs:
     print(f"  {s.name:<20} {s.num_classes:>3} classes  root={s.root}")
 PYEOF
-say "done. Next: python -m pytest tests/test_bangla_handshape_smoke.py -q"
+say "done. Next: python -m pytest tests/test_banglahandshape_smoke.py -q"

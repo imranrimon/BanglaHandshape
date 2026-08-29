@@ -13,8 +13,8 @@ H=/users/mh00145/BH_home
 MATRIX="work_dir/bhc_xferext_matrix"
 
 # stage code (data pre-staged: BdSL47/BDSL49 already on scratch, RSBdSL38 verified)
-cp "$H/path3_handshape_benchmark/train_baseline.py"    "$R/path3_handshape_benchmark/"
-cp "$H/bangla_handshape/class_alignment.py"            "$R/bangla_handshape/"
+cp "$H/benchmark/baselines/train_baseline.py"    "$R/benchmark/"
+cp "$H/banglahandshape/class_alignment.py"            "$R/banglahandshape/"
 test -d "$R/data/RSBdSL38/train/37" || { echo "RSBdSL38 not staged"; exit 1; }
 
 SRC=(bdsl47_digits bdsl47_letters bdsl49_recognition rsbdsl38)
@@ -31,7 +31,7 @@ cd "$R"; source ~/miniconda3/etc/profile.d/conda.sh; conda activate bdsl_graph
 export HF_HOME=/scratch/$USER/hf_cache TORCH_HOME=/scratch/$USER/torch_cache \
        HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONIOENCODING=utf-8
 
-cfg="path3_handshape_benchmark/configs/_xferext_${s}.yaml"
+cfg="benchmark/configs/_xferext_${s}.yaml"
 cat > "$cfg" <<YAML
 Experiment_name: bhc_xferext_${s}
 sources:
@@ -58,7 +58,7 @@ save_interval: 50
 work_dir: ./work_dir/bhc_xferext_${s}
 YAML
 
-python -u -m path3_handshape_benchmark.train_baseline \
+python -u -m benchmark.baselines.train_baseline \
   --config "$cfg" --seeds 0 --results-csv results/bhc_xferext_${s}_seed0.csv
 mkdir -p "$MATRIX"
 cp "work_dir/bhc_xferext_${s}/encoder_seed0_epoch50.pt" \

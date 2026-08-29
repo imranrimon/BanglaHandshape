@@ -36,7 +36,7 @@ conda activate bdsl_graph
 set -u
 export PYTHONIOENCODING=utf-8
 # compute nodes are offline: load backbone weights from the login-node-populated
-# cache (preprocessing/predownload_weights.py). Skips timm's network HEAD check.
+# cache (data_prep/predownload_weights.py). Skips timm's network HEAD check.
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 
@@ -54,11 +54,11 @@ echo "=== task $SLURM_ARRAY_TASK_ID  mode=$MODE  timm=$TIMM  tag=$TAG ==="
 python -c "import torch;print('cuda',torch.cuda.is_available(),torch.cuda.get_device_name(0))"
 
 if [ "$MODE" = "E" ]; then
-  python -u -m path3_handshape_benchmark.signer_probe \
+  python -u -m benchmark.analysis.signer_probe \
       --timm-name "$TIMM" \
       --output "results/reviewer/E_decodability_${TAG}.md"
 else
-  python -u -m path3_handshape_benchmark.factorial_signer_session \
+  python -u -m benchmark.analysis.factorial_signer_session \
       --timm-name "$TIMM" --seeds 0 1 2 \
       --output "results/reviewer/A_factorial_${TAG}.csv"
   python -u tools/mixed_effects.py \

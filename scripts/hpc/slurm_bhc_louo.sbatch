@@ -37,5 +37,5 @@ python -c "import torch; torch.zeros(1).cuda()" 2>/dev/null || {
 RUNNERS=(louo_appearance louo_keypoint)
 R=${RUNNERS[$SLURM_ARRAY_TASK_ID]}
 echo "=== $R (LOUO, 3 seeds) ==="
-python -u -m "path3_handshape_benchmark.$R" --seeds 0 1 2 --results-csv "results/bhc_${R}.csv"
+python -u -m "benchmark.$R" --seeds 0 1 2 --results-csv "results/bhc_${R}.csv"
 echo "=== done $R ==="

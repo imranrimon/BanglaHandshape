@@ -38,7 +38,7 @@ T=${THRS[$SLURM_ARRAY_TASK_ID]}
 python -c "import torch;print('cuda',torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU')"
 echo "=== proposing alignment at sim-threshold $T (all on-disk sources) ==="
 
-python -u -m path3_handshape_benchmark.propose_alignment \
+python -u -m benchmark.analysis.propose_alignment \
   --out "alignment/handshape_alignment.proposed_${T}.json" \
   --review-csv "alignment/handshape_alignment_review_${T}.csv" \
   --timm-name vit_base_patch14_dinov2.lvd142m \

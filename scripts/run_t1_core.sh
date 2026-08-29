@@ -8,8 +8,8 @@ export PYTHONUNBUFFERED=1
 mkdir -p logs
 for cfg in linear_probe lora probe_imagenet_vit_s; do
   echo "=== START $cfg $(date +%H:%M:%S) ==="
-  "$PY" -u -m path3_handshape_benchmark.train_baseline \
-      --config "path3_handshape_benchmark/configs/$cfg.yaml" --seeds 0 1 2 \
+  "$PY" -u -m benchmark.baselines.train_baseline \
+      --config "benchmark/configs/$cfg.yaml" --seeds 0 1 2 \
       > "logs/t1_$cfg.log" 2>&1
   echo "=== DONE $cfg exit=$? $(date +%H:%M:%S) ==="
 done

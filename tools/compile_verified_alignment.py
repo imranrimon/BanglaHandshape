@@ -3,8 +3,8 @@
 Deterministic reducer. Input is the verification workbook (built by
 tools/build_taxonomy_workbook.py, then edited by a native-signer / SL-linguist and
 saved as e.g. alignment/handshape_alignment.verified.csv). Output is the
-contiguous-id alignment JSON that bangla_handshape/handshape_taxonomy.py loads and
-path3_handshape_benchmark/run_lodo.py consumes.
+contiguous-id alignment JSON that banglahandshape/handshape_taxonomy.py loads and
+benchmark/analysis/run_lodo.py consumes.
 
 Decision column semantics (see docs/E16_taxonomy_verification/README.md):
     confirm            keep this class in its current canonical_id group

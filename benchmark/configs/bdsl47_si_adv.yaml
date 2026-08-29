@@ -1,0 +1,40 @@
+# Tier-2 method — signer-ADVERSARIAL LoRA-DINOv2 on BdSL47 (SIGNER-INDEPENDENT).
+# Same encoder / split / hparams as bdsl47_si.yaml so the SI Top-1 is a clean
+# comparison to the plain baseline. Adds a Gradient-Reversal signer head; the
+# headline is that closing the signer shortcut RAISES SI accuracy / shrinks the
+# SD-SI gap (pair with bdsl47_sd.yaml for the gap).
+# Run: python -m benchmark.baselines.train_adversarial \
+#          --config benchmark/configs/bdsl47_si_adv.yaml --seeds 0 1 2
+Experiment_name: bhc_bdsl47_si_adv
+
+sources:
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+
+split:
+  val_users: [4]
+  test_users: [5]
+  # force_random omitted -> BdSL47 uses its user-disjoint (SI) split.
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj, mlp.fc1, mlp.fc2]
+
+# Signer-adversarial strength. adv_lambda_schedule warms lambda 0 -> adv_lambda
+# over training (DANN schedule); set it False for a constant lambd.
+adv_lambda: 1.0
+adv_lambda_schedule: True
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 50          # matches bdsl47_si (run_campaign bumps that to 50) for a fair SI comparison; the DANN adversary also needs the epochs to bite
+base_lr: 0.0005
+weight_decay: 0.01
+grad_clip: 1.0
+save_interval: 1
+work_dir: ./work_dir/bhc_bdsl47_si_adv

@@ -27,5 +27,5 @@ export PYTHONIOENCODING=utf-8
 SRCS=(bdsl47_digits bdsl47_letters)
 S=${SRCS[$SLURM_ARRAY_TASK_ID]}
 echo "=== extract hand bbox: $S ==="
-python -u preprocessing/extract_hand_bbox.py --only "$S"
+python -u data_prep/extract_hand_bbox.py --only "$S"
 echo "=== done bbox: $S ==="

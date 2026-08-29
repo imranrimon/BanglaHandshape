@@ -33,7 +33,7 @@ python -c "import torch; torch.zeros(1).cuda()" 2>/dev/null || {
 LT=(attn.qkv attn.proj mlp.fc1 mlp.fc2)
 
 echo "=== SF1: BdSL47-Letters confusion (bhc_lora seed 0, epoch 50) ==="
-python -u -m path3_handshape_benchmark.plot_confusion \
+python -u -m benchmark.figures.plot_confusion \
   --source bdsl47_letters --encoder-dir work_dir/bhc_lora --seed 0 --epoch 50 \
   --timm-name vit_small_patch14_dinov2.lvd142m --lora-rank 8 --lora-targets "${LT[@]}" \
   --output results/SF1_bdsl47_letters.png

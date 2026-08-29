@@ -69,7 +69,7 @@ and, ideally, `hamnosys` once per confirmed group.
    `run_lodo` warns. It has no data/GPU dependency.)*
 5. Run LODO:
    ```bash
-   python -m path3_handshape_benchmark.run_lodo \
+   python -m benchmark.analysis.run_lodo \
        --alignment-json alignment/handshape_alignment.json --seeds 0 1 2 \
        --results-csv results/bhc_lodo.csv          # or: sbatch scripts/hpc/slurm_lodo.sbatch
    ```

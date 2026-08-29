@@ -19,15 +19,15 @@ sys.path.insert(0, os.getcwd())
 import pandas as pd
 import yaml
 
-from path3_handshape_benchmark.train_baseline import _train_one_seed
-from path3_handshape_benchmark.train_probe_cached import is_probe_config, run_probe_cached
+from benchmark.baselines.train_baseline import _train_one_seed
+from benchmark.baselines.train_probe_cached import is_probe_config, run_probe_cached
 
 # CSV path is env-overridable so a SLURM job ARRAY can give each task its own
 # file (results/bhc_<config>.csv) — concurrent appends from many nodes to one
 # shared CSV would interleave/corrupt rows. Merge the per-task CSVs afterwards.
 CSV = os.environ.get("CAMPAIGN_CSV", "results_final.csv")
 SEEDS = [int(s) for s in os.environ.get("CAMPAIGN_SEEDS", "0 1 2").split()]
-CONFIG_DIR = "path3_handshape_benchmark/configs"
+CONFIG_DIR = "benchmark/configs"
 
 
 def seed_done(base, seed):

@@ -15,9 +15,9 @@ SRC=(rsbdsl38 bdsl49_recognition)
 src=${SRC[$SLURM_ARRAY_TASK_ID]}
 
 # --- stage code ---
-cp "$H/path3_handshape_benchmark/eval_leakage.py"          "$R/path3_handshape_benchmark/"
-cp "$H/path3_handshape_benchmark/eval_leakage_provided.py" "$R/path3_handshape_benchmark/"
-cp "$H/bangla_handshape/class_alignment.py"                "$R/bangla_handshape/"
+cp "$H/benchmark/analysis/eval_leakage.py"          "$R/benchmark/"
+cp "$H/benchmark/analysis/eval_leakage_provided.py" "$R/benchmark/"
+cp "$H/banglahandshape/class_alignment.py"                "$R/banglahandshape/"
 
 # --- data pre-staged by the bhc_stage job (RSBdSL38) / already on scratch (BDSL49) ---
 if [ "$src" = "rsbdsl38" ]; then
@@ -28,7 +28,7 @@ cd "$R"; source ~/miniconda3/etc/profile.d/conda.sh; conda activate bdsl_graph
 export HF_HOME=/scratch/$USER/hf_cache TORCH_HOME=/scratch/$USER/torch_cache \
        HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONIOENCODING=utf-8
 
-python -u -m path3_handshape_benchmark.eval_leakage_provided --sources "$src"
+python -u -m benchmark.analysis.eval_leakage_provided --sources "$src"
 
 mkdir -p /users/mh00145/_revision_results
 cp "results/T_leakage_provided_${src}.md" /users/mh00145/_revision_results/ 2>/dev/null || true

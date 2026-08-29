@@ -32,20 +32,20 @@ export TRANSFORMERS_OFFLINE=1
 python -c "import torch;print('cuda',torch.cuda.is_available(),torch.cuda.get_device_name(0))"
 
 echo "===== SF1: confusion heatmaps ====="
-python -u -m path3_handshape_benchmark.plot_confusion \
+python -u -m benchmark.figures.plot_confusion \
   --source bdsl47_letters --encoder-dir work_dir/bhc_bdsl47_si --seed 0 --epoch 50 \
   --normalize --output results/SF1_confusion_bdsl47letters.png || echo "[warn] SF1 letters failed"
-python -u -m path3_handshape_benchmark.plot_confusion \
+python -u -m benchmark.figures.plot_confusion \
   --source bdsl49_recognition --encoder-dir work_dir/bhc_lora --seed 0 --epoch 50 \
   --normalize --output results/SF1_confusion_bdsl49.png || echo "[warn] SF1 bdsl49 failed"
 
 echo "===== SF2: Grad-CAM SD-vs-SI ====="
-python -u -m path3_handshape_benchmark.plot_gradcam \
+python -u -m benchmark.figures.plot_gradcam \
   --source bdsl47_letters --seed 0 --n 6 \
   --output results/SF2_gradcam_sd_vs_si.png || echo "[warn] SF2 failed"
 
 echo "===== SF3 + SF4: per-class SD-SI delta + ECE calibration ====="
-python -u -m path3_handshape_benchmark.shortcut_analysis \
+python -u -m benchmark.analysis.shortcut_analysis \
   --si-dir work_dir/bhc_bdsl47_si --sd-dir work_dir/bhc_bdsl47_sd \
   --seed 0 --sources bdsl47_digits bdsl47_letters || echo "[warn] SF3/SF4 failed"
 

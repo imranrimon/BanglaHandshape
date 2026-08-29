@@ -1,7 +1,7 @@
 """Mixed-effects analysis for the §A factorial (reviewer major-revision).
 
 Consumes the per-(cond, signer, seed) CSV that
-``path3_handshape_benchmark/factorial_signer_session.py`` writes and produces the
+``benchmark/analysis/factorial_signer_session.py`` writes and produces the
 coefficient / variance-component table that *replaces* the manuscript's Eq. 1
 "estimated separately" decomposition with identified numbers:
 

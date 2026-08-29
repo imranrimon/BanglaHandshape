@@ -32,5 +32,5 @@ export TRANSFORMERS_OFFLINE=1
 
 python -c "import torch; torch.zeros(1).cuda()" 2>/dev/null || {
   echo "GPU not usable on $(hostname) -> requeue"; scontrol requeue "$SLURM_JOB_ID"; exit 1; }
-python -u -m path3_handshape_benchmark.run_transfer_train_one --task "$SLURM_ARRAY_TASK_ID"
+python -u -m benchmark.analysis.run_transfer_train_one --task "$SLURM_ARRAY_TASK_ID"
 echo "=== done transfer-train task $SLURM_ARRAY_TASK_ID ==="

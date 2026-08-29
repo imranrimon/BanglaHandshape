@@ -9,13 +9,13 @@
 set -eo pipefail
 R=/scratch/mh00145/BanglaHandshape
 H=/users/mh00145/BH_home
-cp "$H/path3_handshape_benchmark/eval_cross_dataset.py" "$R/path3_handshape_benchmark/"
-cp "$H/bangla_handshape/class_alignment.py"             "$R/bangla_handshape/"
+cp "$H/benchmark/analysis/eval_cross_dataset.py" "$R/benchmark/"
+cp "$H/banglahandshape/class_alignment.py"             "$R/banglahandshape/"
 cd "$R"; source ~/miniconda3/etc/profile.d/conda.sh; conda activate bdsl_graph
 export HF_HOME=/scratch/$USER/hf_cache TORCH_HOME=/scratch/$USER/torch_cache \
        HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONIOENCODING=utf-8
 
-python -u -m path3_handshape_benchmark.eval_cross_dataset \
+python -u -m benchmark.analysis.eval_cross_dataset \
   --encoder-dir work_dir/bhc_xferext_matrix --epoch 50 --seed 0 \
   --only-sources bdsl47_digits bdsl47_letters bdsl49_recognition rsbdsl38 \
   --lora-rank 8 --lora-alpha 16.0 \

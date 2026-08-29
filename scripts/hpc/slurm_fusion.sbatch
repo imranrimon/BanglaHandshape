@@ -33,13 +33,13 @@ for f in bdsl47_digits bdsl47_letters; do
 done
 
 echo "=== FUSION: signer-independent (SI) ==="
-python -u -m path3_handshape_benchmark.train_fusion \
-  --config path3_handshape_benchmark/configs/fusion_bdsl47_si.yaml \
+python -u -m benchmark.baselines.train_fusion \
+  --config benchmark/configs/fusion_bdsl47_si.yaml \
   --seeds 0 1 2 --results-csv results/bhc_fusion_si.csv
 
 echo "=== FUSION: signer-dependent (SD) ==="
-python -u -m path3_handshape_benchmark.train_fusion \
-  --config path3_handshape_benchmark/configs/fusion_bdsl47_sd.yaml \
+python -u -m benchmark.baselines.train_fusion \
+  --config benchmark/configs/fusion_bdsl47_sd.yaml \
   --seeds 0 1 2 --results-csv results/bhc_fusion_sd.csv
 
 echo "=== FUSION COMPLETE -> results/bhc_fusion_si.csv, bhc_fusion_sd.csv ==="

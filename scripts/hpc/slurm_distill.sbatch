@@ -34,8 +34,8 @@ for f in bdsl47_digits bdsl47_letters; do
 done
 
 echo "=== DISTILL: signer-independent (SI), pose -> RGB ==="
-python -u -m path3_handshape_benchmark.train_distill \
-  --config path3_handshape_benchmark/configs/bdsl47_si_distill.yaml \
+python -u -m benchmark.baselines.train_distill \
+  --config benchmark/configs/bdsl47_si_distill.yaml \
   --seeds 0 1 2 --results-csv results/bhc_distill.csv
 
 echo "=== DISTILL COMPLETE -> results/bhc_distill.csv ==="

@@ -27,5 +27,5 @@ export PYTHONIOENCODING=utf-8
 SRCS=(bdsl_mnist bdsl47_digits bdsl47_letters bdsl49_recognition)
 S=${SRCS[$SLURM_ARRAY_TASK_ID]}
 echo "=== extract keypoints: $S ==="
-python -u preprocessing/extract_keypoints.py --only "$S"
+python -u data_prep/extract_keypoints.py --only "$S"
 echo "=== done keypoints: $S ==="

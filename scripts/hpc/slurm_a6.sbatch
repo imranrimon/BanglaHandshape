@@ -31,7 +31,7 @@ python -c "import mediapipe as mp; print('mediapipe', mp.__version__)"
 test -s .kp_models/hand_landmarker.task || { echo "[abort] .kp_models/hand_landmarker.task missing — run scripts/_a6_prep.sh on the login node first"; exit 1; }
 # BdSL47 digits+letters = the SI pose-vs-appearance comparison (identical images
 # and user-disjoint split as bdsl47_si). BSLD_45 excluded (drawn-overlay, 0% det).
-python preprocessing/extract_keypoints.py --only bdsl47_digits bdsl47_letters
+python data_prep/extract_keypoints.py --only bdsl47_digits bdsl47_letters
 conda deactivate
 
 echo "############## [2/2] TRAIN (bdsl_graph env) ##############"
@@ -45,16 +45,16 @@ export TRANSFORMERS_OFFLINE=1
 python -c "import torch;print('cuda',torch.cuda.is_available(),torch.cuda.get_device_name(0))"
 
 echo "=== A6: keypoint MLP (SI, 3 seeds) ==="
-python -m path3_handshape_benchmark.train_keypoint \
-  --config path3_handshape_benchmark/configs/keypoint_mlp.yaml \
+python -m benchmark.baselines.train_keypoint \
+  --config benchmark/configs/keypoint_mlp.yaml \
   --seeds 0 1 2 --results-csv results/bhc_keypoint_mlp.csv
 
 echo "=== A6: LOUO keypoint (pose, 10 signers x 3 seeds) ==="
-python -m path3_handshape_benchmark.louo_keypoint \
+python -m benchmark.analysis.louo_keypoint \
   --seeds 0 1 2 --results-csv results/bhc_louo_keypoint.csv
 
 echo "=== A6: LOUO appearance (frozen DINOv2-B, symmetric) ==="
-python -m path3_handshape_benchmark.louo_appearance \
+python -m benchmark.analysis.louo_appearance \
   --seeds 0 1 2 --results-csv results/bhc_louo_appearance.csv
 
 echo "=== A6 COMPLETE -> results/bhc_keypoint_mlp.csv, bhc_louo_keypoint.csv, bhc_louo_appearance.csv ==="

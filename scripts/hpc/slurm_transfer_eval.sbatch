@@ -26,6 +26,6 @@ export TORCH_HOME="$HOME/torch_cache"
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 
-python -u -m path3_handshape_benchmark.run_transfer_matrix \
-    --config path3_handshape_benchmark/configs/transfer_matrix.yaml --eval-only
+python -u -m benchmark.analysis.run_transfer_matrix \
+    --config benchmark/configs/transfer_matrix.yaml --eval-only
 echo "=== T4 matrix built -> results/T4_transfer_matrix.md ==="

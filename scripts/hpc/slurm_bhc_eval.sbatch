@@ -59,5 +59,5 @@ CMDS=(
 )
 ARGS=${CMDS[$SLURM_ARRAY_TASK_ID]}
 echo "=== task $SLURM_ARRAY_TASK_ID: $ARGS ==="
-python -u -m "path3_handshape_benchmark.${ARGS%% *}" ${ARGS#* }
+python -u -m "benchmark.${ARGS%% *}" ${ARGS#* }
 echo "=== done task $SLURM_ARRAY_TASK_ID ==="

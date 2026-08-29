@@ -10,9 +10,9 @@ train/val/test splits, and a cross-corpus class-alignment schema; users
 re-fetch the third-party images themselves.
 
 Source-of-truth for the source list and on-disk paths is
-`bangla_handshape/class_alignment.py` (`DEFAULT_SOURCES`); the re-fetch recipe
-is `docs/SISTER_PAPER_DATA_REFETCH.md`; the experimental design is
-`docs/SISTER_PAPER_EXPERIMENTAL_DESIGN.md`.
+`banglahandshape/class_alignment.py` (`DEFAULT_SOURCES`); the re-fetch recipe
+is `DATA_REFETCH.md`; the experimental design is
+`EXPERIMENTAL_DESIGN.md`.
 
 ---
 
@@ -128,7 +128,7 @@ identity-revealing.
 **How was the data acquired?**
 We did not collect any images. Each source is a pre-existing public dataset
 downloaded from its original distribution channel. Download locations and exact
-extract paths are in `docs/SISTER_PAPER_DATA_REFETCH.md`. In summary
+extract paths are in `DATA_REFETCH.md`. In summary
 (exact citations marked TODO/VERIFY):
 
 - **BdSL47 (Sign Digits + Sign Letters)** — public release (Mendeley
@@ -197,8 +197,8 @@ The raw images are the original third-party files; we do not modify them.
 Preprocessing outputs (caches) are gitignored and regenerable.
 
 **Is the preprocessing software available?**
-Yes — all preprocessing (`bangla_handshape/`, `preprocessing/`,
-`path3_handshape_benchmark/`) is released in this repository.
+Yes — all preprocessing (`banglahandshape/`, `data_prep/`,
+`benchmark/`) is released in this repository.
 
 ---
 
@@ -234,7 +234,7 @@ variance, and should not merge label spaces without a verified alignment.
 **Will the dataset be distributed to third parties?**
 The **images are not redistributed by us.** They remain third-party public
 datasets; users re-fetch them from the original sources per
-`docs/SISTER_PAPER_DATA_REFETCH.md`. We release only: the benchmark **code**, the
+`DATA_REFETCH.md`. We release only: the benchmark **code**, the
 fixed **SI splits / protocol**, and the cross-corpus **class-alignment schema**
 (compute-proposed draft, unverified).
 

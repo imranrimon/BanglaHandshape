@@ -31,7 +31,7 @@ export TRANSFORMERS_OFFLINE=1
 python -c "import torch;print('cuda',torch.cuda.is_available(),torch.cuda.get_device_name(0))"
 
 echo "===== T_robustness + SF6: corruption robustness (SI BdSL47) ====="
-python -u -m path3_handshape_benchmark.eval_robustness \
+python -u -m benchmark.analysis.eval_robustness \
   --si-dir work_dir/bhc_bdsl47_si --seed 0 \
   --sources bdsl47_digits bdsl47_letters || echo "[warn] robustness eval failed"
 

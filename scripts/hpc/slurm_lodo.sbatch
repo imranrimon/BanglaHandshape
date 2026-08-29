@@ -31,7 +31,7 @@ ALIGN=alignment/handshape_alignment.json
 test -s "$ALIGN" || { echo "[abort] $ALIGN missing. Draft with propose_alignment.py, then verify (alignment/README.md)."; exit 1; }
 python -c "import json,sys; a=json.load(open('$ALIGN')); sys.exit(0 if a.get('verified') else 'ALIGNMENT NOT VERIFIED — set verified:true after expert review before reporting LODO')"
 
-python -u -m path3_handshape_benchmark.run_lodo \
+python -u -m benchmark.analysis.run_lodo \
   --alignment-json "$ALIGN" --seeds 0 1 2 \
   --results-csv results/bhc_lodo.csv --work-dir work_dir/bhc_lodo
 

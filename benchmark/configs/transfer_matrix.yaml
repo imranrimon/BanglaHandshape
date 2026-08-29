@@ -1,0 +1,52 @@
+# T4 — cross-dataset transfer matrix (RQ3).
+# eval_cross_dataset needs a SEPARATE encoder per source ("train on A"), but the
+# headline sweep trains ONE joint multi-head encoder. This config drives
+# run_transfer_matrix.py, which trains one SINGLE-SOURCE LoRA encoder per source
+# (each source in `sources` below becomes its own single-source run), collects
+# the checkpoints into `matrix_dir` renamed encoder_<src>_seed<N>_epoch<E>.pt,
+# then calls eval_cross_dataset to fit a fresh linear head on every target B.
+#
+# Encoder hyperparameters MUST match the headline LoRA config (lora.yaml) so the
+# transfer numbers are comparable to T1.
+#
+# Run (bdsl_graph):
+#   python -m benchmark.analysis.run_transfer_matrix \
+#       --config benchmark/configs/transfer_matrix.yaml
+Experiment_name: bhc_xfer
+
+sources:
+  bdsl_mnist:          data/BdSL-MNIST
+  bdsl47_digits:       "data/BdSL47/Bangla Sign Language Dataset - Sign Digits"
+  bdsl47_letters:      "data/BdSL47/Bangla Sign Language Dataset - Sign Letters"
+  bsld_45:             data/BSLD_45/Train
+  bdsl49_recognition:  data/bdsl49_extracted/Recognition_1/Recognition_1/train
+
+split:
+  val_users: [4]
+  test_users: [5]
+  random_val_frac: 0.10
+  random_test_frac: 0.10
+  seed: 0
+
+encoder:
+  timm_name: vit_small_patch14_dinov2.lvd142m
+  pretrained: True
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  lora_targets: [attn.qkv, attn.proj, mlp.fc1, mlp.fc2]
+
+image_size: 224
+batch_size: 64
+num_workers: 4
+num_epoch: 50
+base_lr: 0.0005
+weight_decay: 0.01
+grad_clip: 1.0
+save_interval: 50          # only the final-epoch encoder is needed
+
+# T4-specific knobs (read by run_transfer_matrix.py, ignored by train_baseline):
+seeds: [0, 1, 2]
+eval_seed: 0               # which seed's encoders build the reported matrix
+matrix_dir: ./work_dir/bhc_xfer_matrix
+output: results/T4_transfer_matrix.md

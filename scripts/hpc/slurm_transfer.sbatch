@@ -9,7 +9,7 @@
 # Run scripts/hpc/slurm_sweep.sbatch (the spine) first. Submit from repo root:
 #     sbatch scripts/hpc/slurm_transfer.sbatch
 # Fill the -p line from `sinfo -s`. Edit seeds/eval_seed in
-# path3_handshape_benchmark/configs/transfer_matrix.yaml if you want fewer seeds.
+# benchmark/configs/transfer_matrix.yaml if you want fewer seeds.
 # =====================================================================
 #SBATCH -J bhc_transfer
 #SBATCH -c 8
@@ -34,14 +34,14 @@ export TRANSFORMERS_OFFLINE=1
 
 python - <<'PYEOF'
 import sys
-from bangla_handshape.class_alignment import discover_default
+from banglahandshape.class_alignment import discover_default
 srcs = discover_default(repo_root=".")
 print("sources:", [(s.name, s.num_classes) for s in srcs])
 if len(srcs) < 2:
     sys.exit("[abort] need >=2 sources on disk — run scripts/refetch_data.sh first")
 PYEOF
 
-python -u -m path3_handshape_benchmark.run_transfer_matrix \
-    --config path3_handshape_benchmark/configs/transfer_matrix.yaml
+python -u -m benchmark.analysis.run_transfer_matrix \
+    --config benchmark/configs/transfer_matrix.yaml
 
 echo "T4 transfer matrix done -> results/T4_transfer_matrix.md"

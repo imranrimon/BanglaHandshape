@@ -27,7 +27,7 @@ export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 python -c "import torch;print('cuda',torch.cuda.is_available(),torch.cuda.get_device_name(0))"
 
-python -u -m path3_handshape_benchmark.train_adversarial \
-  --config path3_handshape_benchmark/configs/bdsl47_si_adv.yaml \
+python -u -m benchmark.baselines.train_adversarial \
+  --config benchmark/configs/bdsl47_si_adv.yaml \
   --seeds 0 1 2 --results-csv results/bhc_adv.csv
 echo "=== ADVERSARIAL DONE -> results/bhc_adv.csv ==="

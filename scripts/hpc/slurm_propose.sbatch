@@ -29,7 +29,7 @@ export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 python -c "import torch;print('cuda',torch.cuda.is_available(),torch.cuda.get_device_name(0))"
 
-python -u -m path3_handshape_benchmark.propose_alignment \
+python -u -m benchmark.analysis.propose_alignment \
   --out alignment/handshape_alignment.proposed.json \
   --review-csv alignment/handshape_alignment_review.csv \
   --timm-name vit_base_patch14_dinov2.lvd142m \

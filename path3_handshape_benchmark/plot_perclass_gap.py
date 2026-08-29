@@ -53,7 +53,7 @@ def _percls_acc(spec, enc_dir, tr, va, seed, tf):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--topn", type=int, default=15); ap.add_argument("--output", default="paper/figs/SF3_perclass")
+    ap.add_argument("--topn", type=int, default=15); ap.add_argument("--output", default="results/SF3_perclass")
     a = ap.parse_args()
     tf = _build_transforms(224)
     rows = []
@@ -83,6 +83,7 @@ def main():
     despine(ax); ygrid(ax)
     barlabels(ax, bars, fmt="{:.0f}", dy=0.8, fontsize=5.5)
     fig.tight_layout()
+    os.makedirs(os.path.dirname(a.output) or ".", exist_ok=True)
     for ext in ("pdf", "png"):
         fig.savefig(f"{a.output}.{ext}", bbox_inches="tight")
     print(f"wrote {a.output}.{{pdf,png}}")

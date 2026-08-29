@@ -96,7 +96,5 @@ are **not** redistributed here and retain their own upstream licenses — see
 
 ## Notes
 
-This is the companion ("sister paper") to a separate word-level Bangla sign
-language recognition project, extracted here as a standalone benchmark. The
-`environment.yml` is the shared research environment and installs more than this
+The `environment.yml` is the shared research environment and installs more than this
 image-only repo strictly needs.

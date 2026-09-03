@@ -10,8 +10,8 @@ abstract: >-
   evaluation and near-duplicate leakage audits.
 type: software
 authors:
-  - family-names: Rimon
-    given-names: Imran
+  - family-names: Hossain
+    given-names: Muhammad Imran
 repository-code: "https://github.com/imranrimon/BanglaHandshape"
 license: MIT
 version: "1.0.0"

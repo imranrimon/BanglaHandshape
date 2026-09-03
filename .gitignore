@@ -47,3 +47,10 @@ paper/*.bbl
 paper/*.blg
 paper/*.out
 slurm_logs/
+
+# Paper-internal material (never publish)
+paper/
+docs/REVISION_PLAN.md
+REVISION_PLAN.md
+*.tex
+refs.bib
